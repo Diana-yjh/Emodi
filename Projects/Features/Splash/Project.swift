@@ -1,0 +1,30 @@
+//
+//  Project.swift
+//  SplashManifests
+//
+//  Created by Yejin Hong on 12/9/25.
+//
+
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project(
+    name: "Splash",
+    targets: [
+        .target(
+            name: "Splash",
+            destinations: Environment.destinations,
+            product: .framework,
+            bundleId: .appIdentifier + "Splash",
+            deploymentTargets: .iOS(
+                "17.0"
+            ),
+            infoPlist: .default,
+            sources: ["Presentation/**"],
+            resources: [],
+            dependencies: [
+                .project(target: "DesignSystem", path: "../../DesignSystem")
+            ]
+        )
+    ]
+)
