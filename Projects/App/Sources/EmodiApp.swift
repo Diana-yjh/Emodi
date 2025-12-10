@@ -12,15 +12,21 @@ import FirebaseCore
 
 @main
 struct EmodiApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var coordinator = AppCoordinator()
     
-    init() {
-        FirebaseApp.configure()
-    }
+    init() {}
     
     var body: some Scene {
         WindowGroup {
             coordinator.rootView()
         }
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
     }
 }
