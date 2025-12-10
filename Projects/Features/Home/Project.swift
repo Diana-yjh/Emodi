@@ -10,6 +10,10 @@ import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Home",
+    packages: [
+        .alamofire,
+        .firebase
+    ],
     targets: [
         .target(
             name: "HomeDomain",
@@ -51,6 +55,9 @@ let project = Project(
             sources: ["Presentation/**"],
             resources: [],
             dependencies: [
+                .alamofire,
+                .firebaseStorage,
+                .firebaseDatabase,
                 .target(name: "HomeDomain"),
                 .project(target: "DesignSystem", path: "../../DesignSystem")
             ]

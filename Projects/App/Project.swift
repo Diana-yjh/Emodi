@@ -5,7 +5,7 @@ let project = Project(
     name: "Emodi",
     organizationName: "diana",
     packages: [
-        .alamofire
+        .firebase
     ],
     targets: [
         .target(
@@ -24,6 +24,7 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: [
+                .firebaseCore,
                 .project(target: "Coordinator", path: "../Coordinator")
             ]
         ),

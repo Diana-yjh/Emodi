@@ -16,6 +16,10 @@ extension TargetDependency {
 
 public extension TargetDependency {
     static let alamofire: TargetDependency = .package(product: "Alamofire")
+    static let firebaseStorage: TargetDependency = .package(product: "FirebaseStorage")
+    static let firebaseDatabase: TargetDependency = .package(product: "FirebaseDatabase")
+    static let firebaseCrashlytics: TargetDependency = .package(product: "FirebaseCrashlytics")
+    static let firebaseCore: TargetDependency = .package(product: "FirebaseCore")
 }
 
 public extension TargetDependency.Project {
@@ -41,6 +45,7 @@ public extension TargetDependency.SettingProject {
 }
 public extension Package {
     static let alamofire: Package = .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.2")
+    static let firebase: Package = .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0")
 }
 
 public extension SourceFilesList {

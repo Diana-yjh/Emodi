@@ -8,10 +8,15 @@
 
 import SwiftUI
 import Coordinator
+import FirebaseCore
 
 @main
 struct EmodiApp: App {
     @StateObject private var coordinator = AppCoordinator()
+    
+    init() {
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
