@@ -7,22 +7,28 @@
 
 import SwiftUI
 import Combine
+import DesignSystem
 
-public struct CustomTabView: View {
-    @ObservedObject var viewModel: CustomTabViewModel = CustomTabViewModel()
+struct CustomTabView: View {
+    @State var selectedTab: EmodiTab = .home
     @Namespace private var tabAnimation
     
-    public init() {}
+    private var onTabSelected: (EmodiTab) -> Void
     
-    public var body: some View {
+    init(onTabSelected: @escaping (EmodiTab) -> Void) {
+        self.onTabSelected = onTabSelected
+    }
+    
+    var body: some View {
         HStack {
             TabIcon(
                 tab: .home,
-                selected: viewModel.selectedTab == .home,
+                selected: selectedTab == .home,
                 namespace: tabAnimation
             ) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    viewModel.selectedTab = .home
+                    onTabSelected(.home)
+                    selectedTab = .home
                 }
             }
             
@@ -30,11 +36,12 @@ public struct CustomTabView: View {
             
             TabIcon(
                 tab: .analysis,
-                selected: viewModel.selectedTab == .analysis,
+                selected: selectedTab == .analysis,
                 namespace: tabAnimation
             ) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    viewModel.selectedTab = .analysis
+                    onTabSelected(.analysis)
+                    selectedTab = .analysis
                 }
             }
             
@@ -42,11 +49,12 @@ public struct CustomTabView: View {
             
             TabIcon(
                 tab: .setting,
-                selected: viewModel.selectedTab == .setting,
+                selected: selectedTab == .setting,
                 namespace: tabAnimation
             ) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    viewModel.selectedTab = .setting
+                    onTabSelected(.setting)
+                    selectedTab = .setting
                 }
             }
         }
@@ -94,5 +102,5 @@ struct TabIcon: View {
 
 
 #Preview {
-    CustomTabView()
+//    CustomTabView()
 }

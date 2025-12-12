@@ -34,9 +34,18 @@ public final class EmodiCoordinator: ObservableObject {
         case .setting:
             SettingView()
         case .splash:
-            SplashView(onFinished: { [weak self] in
-                self?.currentScreen = .home
-            })
+            EmptyView()
         }
+    }
+    
+    @ViewBuilder
+    public func splashView() -> some View {
+        SplashView(onFinished: { [weak self] in
+            self?.currentScreen = .home
+        })
+    }
+    
+    public func selectTab(_ tab: Screen) {
+        self.currentScreen = tab
     }
 }

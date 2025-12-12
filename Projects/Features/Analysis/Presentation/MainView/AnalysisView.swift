@@ -33,14 +33,6 @@ public struct AnalysisView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            
-            VStack {
-                Spacer()
-                
-                CustomTabView()
-                    .padding(.horizontal, 40)
-            }
-            .ignoresSafeArea()
         }
         .background {
             Image(uiImage: DesignSystemAsset.analysisBackground.image)

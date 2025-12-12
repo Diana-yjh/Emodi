@@ -40,14 +40,6 @@ public struct HomeView: View {
                     .ignoresSafeArea()
                 
             }
-            
-            VStack {
-                Spacer()
-                
-                CustomTabView()
-                    .padding(.horizontal, 40)
-            }
-            .ignoresSafeArea()
         }
         .background(
             Image(uiImage: DesignSystemAsset.background.image)
@@ -55,12 +47,12 @@ public struct HomeView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
         )
-        .opacity(opacity)
-        .onAppear {
-            withAnimation {
-                opacity = 1
-            }
-        }
+//        .opacity(opacity)
+//        .onAppear {
+//            withAnimation {
+//                opacity = 1
+//            }
+//        }
     }
     
     @ViewBuilder
