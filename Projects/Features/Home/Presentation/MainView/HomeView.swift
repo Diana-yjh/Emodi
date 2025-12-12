@@ -16,8 +16,9 @@ public struct HomeView: View {
     public var body: some View {
         ZStack {
             VStack(alignment: .leading) {
-                NavigationBar()
+                NavigationBar(onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
+                
                 Group {
                     Text("Daily Mood")
                         .font(DSFont.bold(30))

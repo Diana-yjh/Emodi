@@ -13,6 +13,9 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "\(Environment.appIdentifier).emodi",
+            deploymentTargets: .iOS(
+                "17.0"
+            ),
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
@@ -24,7 +27,6 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: [
-                .firebaseCore,
                 .project(target: "Coordinator", path: "../Coordinator")
             ]
         ),
