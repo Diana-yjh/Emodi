@@ -1,5 +1,5 @@
 //
-//  AppCoordinator.swift
+//  EmodiCoordinator.swift
 //  Coordinator
 //
 //  Created by Yejin Hong on 12/9/25.
@@ -19,7 +19,7 @@ public enum Screen {
     case splash
 }
 
-public final class AppCoordinator: ObservableObject {
+public final class EmodiCoordinator: ObservableObject {
     @Published public var currentScreen: Screen = .splash
     
     public init() {}
@@ -28,9 +28,7 @@ public final class AppCoordinator: ObservableObject {
     public func rootView() -> some View {
         switch currentScreen {
         case .home:
-            withAnimation {
-                HomeView()
-            }
+            HomeView()
         case .analysis:
             AnalysisView()
         case .setting:

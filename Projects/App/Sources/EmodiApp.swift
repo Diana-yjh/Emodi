@@ -13,7 +13,7 @@ import FirebaseCore
 @main
 struct EmodiApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var coordinator = AppCoordinator()
+    @StateObject private var coordinator = EmodiCoordinator()
     
     init() {}
     
