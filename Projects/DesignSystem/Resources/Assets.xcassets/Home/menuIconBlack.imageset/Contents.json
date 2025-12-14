@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "home_menuIcon 2.png",
+      "filename" : "menuIconBlack.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "home_menuIcon 1.png",
+      "filename" : "menuIconBlack 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "home_menuIcon.png",
+      "filename" : "menuIconBlack 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

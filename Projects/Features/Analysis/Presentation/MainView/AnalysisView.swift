@@ -14,7 +14,7 @@ public struct AnalysisView: View {
     public var body: some View {
         ZStack {
             VStack {
-                NavigationBar(onMenuTab: {}, onAccountTab: {})
+                NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
                 
                 ScrollView {
@@ -85,7 +85,7 @@ struct EmodiCalendarView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 22)
                 .foregroundStyle(.white)
-                .shadow(radius: 4)
+                .shadow(radius: 2)
         }
     }
 }
@@ -101,7 +101,7 @@ struct EmodiAnalysisView: View {
             
             RoundedRectangle(cornerRadius: 22)
                 .foregroundStyle(.white)
-                .shadow(radius: 4)
+                .shadow(radius: 2)
         }
     }
 }

@@ -16,7 +16,7 @@ public struct HomeView: View {
     public var body: some View {
         ZStack {
             VStack(alignment: .leading) {
-                NavigationBar(onMenuTab: {}, onAccountTab: {})
+                NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
                 
                 Group {

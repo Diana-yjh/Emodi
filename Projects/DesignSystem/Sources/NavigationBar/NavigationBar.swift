@@ -7,11 +7,27 @@
 
 import SwiftUI
 
+public enum Theme {
+    case light
+    case dark
+    
+    var image: UIImage {
+        switch self {
+        case .light:
+            DesignSystemAsset.menuIcon.image
+        case .dark:
+            DesignSystemAsset.menuIconBlack.image
+        }
+    }
+}
+
 public struct NavigationBar: View {
     var onMenuTab: () -> Void
     var onAccountTab: () -> Void
+    var theme: Theme
     
-    public init(onMenuTab: @escaping () -> Void, onAccountTab: @escaping () -> Void) {
+    public init(theme: Theme, onMenuTab: @escaping () -> Void, onAccountTab: @escaping () -> Void) {
+        self.theme = theme
         self.onMenuTab = onMenuTab
         self.onAccountTab = onAccountTab
     }
@@ -21,7 +37,7 @@ public struct NavigationBar: View {
             Button {
                 onMenuTab()
             } label: {
-                Image(uiImage: DesignSystemAsset.menuIcon.image)
+                Image(uiImage: theme.image)
                     .resizable()
                     .frame(width: 20, height: 15)
             }
@@ -41,5 +57,5 @@ public struct NavigationBar: View {
 }
 
 #Preview {
-    NavigationBar(onMenuTab: {}, onAccountTab: {})
+    NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
 }
