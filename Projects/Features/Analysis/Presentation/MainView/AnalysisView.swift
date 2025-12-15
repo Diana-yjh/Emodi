@@ -14,7 +14,7 @@ public struct AnalysisView: View {
     public var body: some View {
         ZStack {
             VStack {
-                NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
+                MainNavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
                 
                 ScrollView {

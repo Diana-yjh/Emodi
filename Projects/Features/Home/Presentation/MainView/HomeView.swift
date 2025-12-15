@@ -16,7 +16,7 @@ public struct HomeView: View {
     public var body: some View {
         ZStack {
             VStack(alignment: .leading) {
-                NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
+                MainNavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
                 
                 Group {
@@ -35,7 +35,7 @@ public struct HomeView: View {
                 
                 Spacer()
                 
-                motionHistoryView
+                contentSectionView
                     .padding(.top)
                     .ignoresSafeArea()
                 
@@ -47,16 +47,16 @@ public struct HomeView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
         )
-//        .opacity(opacity)
-//        .onAppear {
-//            withAnimation {
-//                opacity = 1
-//            }
-//        }
+        //        .opacity(opacity)
+        //        .onAppear {
+        //            withAnimation {
+        //                opacity = 1
+        //            }
+        //        }
     }
     
     @ViewBuilder
-    var motionHistoryView: some View {
+    var contentSectionView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white)
@@ -67,23 +67,19 @@ public struct HomeView: View {
                     .padding(.horizontal, 30)
                     .frame(height: 100)
                 
+                HStack() {
+                    MotionHistoryView(onAddButtonTap: {})
+                }
+                .padding(.horizontal)
+                .padding(.vertical, -40)
+                
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            VStack {
-                Spacer()
-                
-                Text("There is no motion diary")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.gray)
-                
-                Spacer()
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-
+    
 }
 
 #Preview {

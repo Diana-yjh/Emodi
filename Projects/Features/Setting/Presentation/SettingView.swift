@@ -14,7 +14,7 @@ public struct SettingView: View {
     public var body: some View {
         ZStack {
             VStack(alignment: .center) {
-                NavigationBar(theme: .dark, onMenuTab: {}, onAccountTab: {})
+                MainNavigationBar(theme: .dark, onMenuTab: {}, onAccountTab: {})
                     .frame(height: 30)
                 
                 Text("Settings")

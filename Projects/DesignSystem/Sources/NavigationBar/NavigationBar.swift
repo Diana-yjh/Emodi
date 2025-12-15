@@ -1,5 +1,5 @@
 //
-//  NavigationBar.swift
+//  MainNavigationBar.swift
 //  HomePresentation
 //
 //  Created by Yejin Hong on 12/8/25.
@@ -21,7 +21,7 @@ public enum Theme {
     }
 }
 
-public struct NavigationBar: View {
+public struct MainNavigationBar: View {
     var onMenuTab: () -> Void
     var onAccountTab: () -> Void
     var theme: Theme
@@ -56,6 +56,32 @@ public struct NavigationBar: View {
     }
 }
 
+public struct SubNavigationBar: View {
+    var onBackButtonTab: () -> Void
+    var theme: Theme
+    
+    public init(theme: Theme, onBackButtonTab: @escaping () -> Void) {
+        self.theme = theme
+        self.onBackButtonTab = onBackButtonTab
+    }
+    
+    public var body: some View {
+        HStack {
+            Button {
+                onBackButtonTab()
+            } label: {
+                Image(systemName: "chevron.backward")
+                    .resizable()
+                    .frame(width: 10, height: 20)
+                    .foregroundStyle(theme == .light ? .white : .black)
+            }
+            
+            Spacer()
+        }
+        .padding()
+    }
+}
+
 #Preview {
-    NavigationBar(theme: .light, onMenuTab: {}, onAccountTab: {})
+    SubNavigationBar(theme: .light, onBackButtonTab: {})
 }
