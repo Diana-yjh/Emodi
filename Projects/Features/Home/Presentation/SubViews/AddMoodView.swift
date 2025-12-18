@@ -9,6 +9,8 @@ import SwiftUI
 import DesignSystem
 
 struct AddMoodView: View {
+    @ObservedObject private var viewModel: AddMoodViewModel = AddMoodViewModel()
+    @State private var showAddDiaryPopup = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -22,13 +24,18 @@ struct AddMoodView: View {
                     Text("How do you feel Now?")
                         .font(DSFont.bold(26))
                     
-                    moodSectionView()
-                        .padding()
+                    MoodSectionView(selected: viewModel.selectedMood) { mood in
+                        viewModel.selectMood(mood)
+                    }
+                    .padding()
                     
-                    diarySectionView(diary: "메모를 작성해 주세요")
+                    DiarySectionView()
                         .padding()
+                        .onTapGesture {
+                            showAddDiaryPopup = true
+                        }
                     
-                    photoSectionView()
+                    PhotoSectionView()
                         .padding(.horizontal)
                     
                     Spacer()
@@ -50,66 +57,47 @@ struct AddMoodView: View {
             }
             .padding()
         }
+        .navigationBarHidden(true)
         .background {
             Image(uiImage: DesignSystemAsset.grayBackground.image)
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
         }
+        .overlay {
+            if showAddDiaryPopup {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    
+                    DiaryView(showAddDiaryPopup: $showAddDiaryPopup)
+                        .padding()
+                }
+            }
+        }
     }
+}
+
+struct MoodSectionView: View {
+    let moods: [MoodType] = [.best, .good, .normal, .bad, .worst]
+    let selected: MoodType?
+    let onSelect: (MoodType) -> Void
     
-    func moodSectionView() -> some View {
-        HStack {
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(uiImage: DesignSystemAsset.greenFace.image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(moods, id: \.self) { mood in
+                Spacer()
+                Button {
+                    withAnimation {
+                        onSelect(mood)
+                    }
+                } label: {
+                    Image(uiImage: mood.image)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .opacity(selected == mood ? 1.0 : 0.3)
+                }
             }
-            
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(uiImage: DesignSystemAsset.blueFace.image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }
-            
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(uiImage: DesignSystemAsset.purpleFace.image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }
-            
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(uiImage: DesignSystemAsset.orangeFace.image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }
-            
-            Spacer()
-            
-            Button {
-                
-            } label: {
-                Image(uiImage: DesignSystemAsset.redFace.image)
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }
-            
             Spacer()
         }
         .padding()
@@ -118,17 +106,20 @@ struct AddMoodView: View {
                 .foregroundStyle(.white)
                 .shadow(radius: 2)
         }
-        
     }
+}
+
+struct DiarySectionView: View {
+    var diary: String = "Tap to add diary"
     
-    func diarySectionView(diary: String) -> some View {
+    var body: some View {
         VStack {
             HStack {
-                Image(systemName: "book")
+                Image(systemName: SectionType.diary.icon)
                     .resizable()
                     .frame(width: 22, height: 18)
                 
-                Text("Diary")
+                Text(SectionType.diary.title)
                     .font(DSFont.bold(16))
                     .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
                 
@@ -149,15 +140,17 @@ struct AddMoodView: View {
             }
         }
     }
-    
-    func photoSectionView() -> some View {
+}
+
+struct PhotoSectionView: View {
+    var body: some View {
         VStack {
             HStack {
-                Image(systemName: "camera")
+                Image(systemName: SectionType.photo.icon)
                     .resizable()
                     .frame(width: 24, height: 18)
                 
-                Text("Photo")
+                Text(SectionType.photo.title)
                     .font(DSFont.bold(16))
                 
                 Spacer()

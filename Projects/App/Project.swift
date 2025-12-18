@@ -27,7 +27,7 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: [
-                .project(target: "Coordinator", path: "../Coordinator")
+                .project(target: "Splash", path: "../Features/Splash")
             ]
         ),
         .target(

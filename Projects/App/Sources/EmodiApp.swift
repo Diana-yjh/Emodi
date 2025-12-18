@@ -7,57 +7,21 @@
 //
 
 import SwiftUI
-import Coordinator
+import HomePresentation
+import AnalysisPresentation
+import SettingPresentation
+import Splash
 import FirebaseCore
-
-extension Screen {
-    var toEmodiTab: EmodiTab? {
-        switch self {
-        case .home: return .home
-        case .analysis: return .analysis
-        case .setting: return .setting
-        case .splash: return nil
-        }
-    }
-}
 
 @main
 struct EmodiApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var coordinator = EmodiCoordinator()
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Environment(\.scenePhase) var scenePhase
     init() {}
     
     var body: some Scene {
         WindowGroup {
-            switch coordinator.currentScreen {
-            case .splash:
-                coordinator.splashView()
-            case .home, .analysis, .setting:
-                
-                ZStack {
-                    coordinator.rootView()
-                    
-                    VStack {
-                        Spacer()
-                        
-                        CustomTabView(
-                            onTabSelected: { newTab in
-                                switch newTab {
-                                case .home:
-                                    coordinator.selectTab(.home)
-                                case .analysis:
-                                    coordinator.selectTab(.analysis)
-                                case .setting:
-                                    coordinator.selectTab(.setting)
-                                }
-                            }
-                        )
-                        .padding(.horizontal, 40)
-                    }
-                    .ignoresSafeArea()
-                }
-            }
+            SplashView()
         }
     }
 }

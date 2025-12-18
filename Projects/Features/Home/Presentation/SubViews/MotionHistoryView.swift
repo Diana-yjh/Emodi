@@ -40,7 +40,7 @@ struct MotionHistoryView: View {
             }
             
             ScrollView {
-                MoodCellView(moodTitle: "Add your mood", memo: "Add your memo")
+                MoodCellView(moodTitle: "Add your mood", memo: "And your memo")
             }
             .padding(.top, -40)
         }
