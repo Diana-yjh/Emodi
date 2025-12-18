@@ -11,6 +11,7 @@ import DesignSystem
 struct DiaryView: View {
     @State var diary: String = ""
     @Binding var showAddDiaryPopup: Bool
+    var diaryFinished: (String) -> Void
     
     var body: some View {
         VStack {
@@ -43,6 +44,7 @@ struct DiaryView: View {
                 .shadow(radius: 2)
             
             Button {
+                diaryFinished(diary)
                 showAddDiaryPopup = false
             } label: {
                 Text("Add")
@@ -58,14 +60,17 @@ struct DiaryView: View {
             .padding()
         }
         .frame(height: 400)
-        .background(DesignSystemAsset.disableButton.swiftUIColor)
+        .background(
+            Image(uiImage: DesignSystemAsset.popupBackground.image)
+        )
         .cornerRadius(30)
         .onTapGesture {
             self.endTextEditing()
         }
+        .shadow(radius: 3)
     }
 }
 
 #Preview {
-    DiaryView(diary: "", showAddDiaryPopup: Binding.constant(true))
+    DiaryView(diary: "", showAddDiaryPopup: Binding.constant(true)) {_ in}
 }

@@ -14,7 +14,7 @@ class AddMoodViewModel: ObservableObject {
     @Published var photos: [String] = []
     
     var canSave: Bool {
-        selectedMood != .none
+        return selectedMood != .none && diaryText != ""
     }
     
     func selectMood(_ mood: MoodType) {
