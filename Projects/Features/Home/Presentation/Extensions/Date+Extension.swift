@@ -41,6 +41,7 @@ extension Date {
         let hour = calendar.component(.hour, from: self)
         let minute = calendar.component(.minute, from: self)
         let second = calendar.component(.second, from: self)
-        return "\(hour):\(minute):\(second)"
+        
+        return String(format: "%02d:%02d", hour, minute)
     }
 }

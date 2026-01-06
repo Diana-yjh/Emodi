@@ -21,25 +21,39 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
         try await firestoreService.addDocument(collection: "mood", data: [
             "user_id": UserManager.shared.userID,
             "diary_id": diaryID,
-            "date": mood.date,
             "time": mood.time,
+            "date": mood.date,
             "mood": mood.mood,
             "memo": mood.memo,
             "photo_url": mood.photoURL ?? ""
         ])
     }
     
-    public func fetchMoodList(userID: String, date: String) async throws -> [MoodEntity] {
+    public func fetchMoodList(date: String) async throws -> [FetchMoodEntity] {
         let result = try await firestoreService.getDocuments(
-            collection: "emodi",
+            collection: "mood",
             filters: [
-                (field: "user_id", value: userID),
+                (field: "user_id", value: UserManager.shared.userID),
                 (field: "date", value: date)
             ],
             orderBy: "time",
-            descending: true
+            descending: false
         )
         
-        return [.init(date: "", time: "", mood: 0, memo: "", photoURL: "")]
+        return result.documents.compactMap { doc -> FetchMoodEntity? in
+            guard let data = doc.data() else { return nil }
+            return MoodEntityMapper.toEntity(from: data)
+        }
+    }
+    
+    public func deleteMood(userID: String, diaryID: String, date: String) async throws {
+        try await firestoreService.deleteDocuments(
+            collection: "mood",
+            filters: [
+                (field: "user_id", value: userID),
+                (field: "diary_id", value: diaryID),
+                (field: "date", value: date)
+            ]
+        )
     }
 }

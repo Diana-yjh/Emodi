@@ -9,6 +9,6 @@ import Foundation
 
 public protocol MoodRepository {
     func addMoodDiary(mood: MoodEntity) async throws
-    func fetchMoodDiary(date: String, userID: String) async throws -> [MoodEntity]
-    func deleteMoodDiary(date: String, userID: String, diaryID: Int) async throws
+    func fetchMoodDiary(date: String) async throws -> [FetchMoodEntity?]
+    func deleteMoodDiary(date: String) async throws
 }

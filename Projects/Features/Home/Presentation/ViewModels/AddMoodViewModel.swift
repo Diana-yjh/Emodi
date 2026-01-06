@@ -78,8 +78,8 @@ extension AddMoodViewModel {
     
     func saveMoodData() async -> EmodiResult<Void, EmodiError> {
         let mood = MoodEntity(
-            date: "\(selectedDate.toYear()).\(selectedDate.toMonthDate())",
-            time: selectedDate.toTime(),
+            time: Date(),
+            date: "\(Date().toYear()).\(Date().toMonthDate())",
             mood: selectedMood.index,
             memo: diaryText,
             photoURL: ""

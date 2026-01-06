@@ -19,13 +19,13 @@ public final class MoodRepositoryImplement: MoodRepository {
         try await remoteDataSource.createMood(mood)
     }
     
-    public func fetchMoodDiary(date: String, userID: String) async throws -> [MoodEntity] {
-        let result = try await remoteDataSource.fetchMoodList(userID: userID, date: date)
+    public func fetchMoodDiary(date: String) async throws -> [FetchMoodEntity?] {
+        let result = try await remoteDataSource.fetchMoodList(date: date)
         
         return result
     }
     
-    public func deleteMoodDiary(date: String, userID: String, diaryID: Int) async throws {
+    public func deleteMoodDiary(date: String) async throws {
 //        try await remoteDataSource.deleteMood(userID: userID, diaryID: diaryID, date: date)
     }
 }

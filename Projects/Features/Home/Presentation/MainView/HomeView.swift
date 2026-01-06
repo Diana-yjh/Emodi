@@ -9,6 +9,7 @@ import SwiftUI
 import DesignSystem
 
 public struct HomeView: View {
+    @ObservedObject private var viewModel: HomeViewModel
     @State private var navigationPath: HomeDestinations = .init()
     @State private var opacity: Double = 0
     @State private var date: Date = .now
@@ -16,8 +17,9 @@ public struct HomeView: View {
     
     let factory: HomeFactory
     
-    public init(factory: HomeFactory, isTabBarHidden: Binding<Bool>) {
+    public init(factory: HomeFactory, isTabBarHidden: Binding<Bool>, viewModel: HomeViewModel) {
         self.factory = factory
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         _isTabBarHidden = isTabBarHidden
     }
     
@@ -62,8 +64,19 @@ public struct HomeView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                await viewModel.fetchMoodLists()
+            }
+        }
         .onChange(of: navigationPath) { newPath in
             self.isTabBarHidden = !newPath.isEmpty
+            
+            if newPath.isEmpty {
+                Task {
+                    await viewModel.fetchMoodLists()
+                }
+            }
         }
         .navigationBarHidden(true)
     }
@@ -79,9 +92,15 @@ public struct HomeView: View {
                 DateBar(date: $date)
                     .padding(.horizontal, 30)
                     .frame(height: 100)
+                    .onChange(of: date) { newDate in
+                        viewModel.selectedDate = "\(newDate.toYear()).\(newDate.toMonthDate())"
+                        Task {
+                            await viewModel.fetchMoodLists()
+                        }
+                    }
                 
                 HStack() {
-                    MotionHistoryView(onAddButtonTap: {
+                    MotionHistoryView(historyList: $viewModel.moodList, onAddButtonTap: {
                         self.isTabBarHidden = true
                         navigationPath.append(.addMood)
                     })

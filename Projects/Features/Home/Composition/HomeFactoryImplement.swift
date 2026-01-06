@@ -19,7 +19,14 @@ public final class HomeFactoryImplement: HomeFactory {
     }
     
     public func makeHomeView(isTabBarHidden: Binding<Bool>) -> HomeView {
-        HomeView(factory: self, isTabBarHidden: isTabBarHidden)
+        let moodRemoteDataSource = MoodRemoteDataSourceImplement(
+            firestoreService: firestoreService
+        )
+        
+        let moodRepository = MoodRepositoryImplement(remoteDataSource: moodRemoteDataSource)
+        let moodUseCase = MoodUseCase(repository: moodRepository)
+        
+        return HomeView(factory: self, isTabBarHidden: isTabBarHidden, viewModel: HomeViewModel(moodUseCase: moodUseCase))
     }
     
     public func makeAddMoodViewModel(date: Date) -> AddMoodViewModel {

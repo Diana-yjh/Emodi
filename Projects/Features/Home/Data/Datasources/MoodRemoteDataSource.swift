@@ -9,6 +9,6 @@ import HomeDomain
 
 public protocol MoodRemoteDataSource {
     func createMood(_ mood: MoodEntity) async throws
-    func fetchMoodList(userID: String, date: String) async throws -> [MoodEntity]
-//    func deleteMood(userID: Int, diaryID: Int, date: String) async throws
+    func fetchMoodList(date: String) async throws -> [FetchMoodEntity]
+    func deleteMood(userID: String, diaryID: String, date: String) async throws
 }

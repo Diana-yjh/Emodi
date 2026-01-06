@@ -1,0 +1,42 @@
+//
+//  HomeViewModel.swift
+//  HomeDomain
+//
+//  Created by Yejin Hong on 1/6/26.
+//  Copyright © 2026 diana. All rights reserved.
+//
+
+import SwiftUI
+import HomeDomain
+
+public class HomeViewModel: ObservableObject {
+    @Published var selectedDate: String = "\(Date().toYear()).\(Date().toMonthDate())"
+    @Published var moodList: [Mood] = []
+    
+    private let moodUseCase: MoodUseCaseProtocol
+    
+    public init(moodUseCase: MoodUseCaseProtocol) {
+        self.moodUseCase = moodUseCase
+    }
+    
+    @MainActor
+    func fetchMoodLists() async {
+        var result: [FetchMoodEntity?] = []
+        
+        do {
+            result = try await moodUseCase.fetchMoodDiary(date: selectedDate)
+        } catch {
+            print("Error")
+        }
+        
+        result.forEach { item in
+            if let item = item {
+                let newMood = Mood(memo: item.memo, mood: item.mood, time: item.time)
+                
+                if !moodList.contains(newMood) {
+                    moodList.insert(Mood(memo: item.memo, mood: item.mood, time: item.time), at: 0)
+                }
+            }
+        }
+    }
+}

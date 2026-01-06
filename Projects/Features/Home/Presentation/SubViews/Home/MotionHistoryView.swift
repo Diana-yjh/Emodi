@@ -9,7 +9,8 @@ import SwiftUI
 import DesignSystem
 
 struct MotionHistoryView: View {
-    var historyList: [String] = []
+    @Binding var historyList: [Mood]
+    
     var onAddButtonTap: () -> Void
     
     var body: some View {
@@ -40,7 +41,9 @@ struct MotionHistoryView: View {
             }
             
             ScrollView {
-                MoodCellView(moodTitle: "Add your mood", memo: "And your memo")
+                ForEach(historyList, id: \.self) { list in
+                    MoodCellView(mood: list.mood, memo: list.memo, time: list.time)
+                }
             }
             .padding(.top, -40)
         }
@@ -48,8 +51,9 @@ struct MotionHistoryView: View {
 }
 
 struct MoodCellView: View {
-    var moodTitle: String
+    var mood: Int
     var memo: String
+    var time: Date
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -57,19 +61,28 @@ struct MoodCellView: View {
                 .frame(width: 30)
                 .padding(.horizontal)
             
-            Image(uiImage: DesignSystemAsset.defaultFace.image)
+            Image(uiImage: MoodType.image(for: mood))
                 .frame(width: 50, height: 24)
             
             VStack(alignment: .leading) {
-                Text(moodTitle)
-                    .font(DSFont.bold(16))
-                    .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
-                    .padding(.bottom, 5)
-                    .padding(.horizontal)
+                HStack {
+                    Text(MoodType.title(for: mood))
+                        .font(DSFont.bold(18))
+                        .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
+                        .padding(.bottom, 5)
+                        .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    Text(time.toTime())
+                        .font(DSFont.medium(14))
+                        .foregroundStyle(DesignSystemAsset.disableButton.swiftUIColor)
+                        .padding(.horizontal)
+                }
                 
                 Text(memo)
-                    .font(DSFont.medium(12))
-                    .foregroundStyle(DesignSystemAsset.disableButton.swiftUIColor)
+                    .font(DSFont.medium(16))
+                    .foregroundStyle(.gray)
                     .padding(.horizontal)
             }
             .frame(height: 24)
@@ -80,5 +93,5 @@ struct MoodCellView: View {
 }
 
 #Preview {
-    MotionHistoryView(onAddButtonTap: {})
+//    MotionHistoryView(onAddButtonTap: {})
 }
