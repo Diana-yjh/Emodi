@@ -27,4 +27,21 @@ enum MoodType: Hashable {
             DesignSystemAsset.defaultFace.image
         }
     }
+    
+    var index: Int {
+        switch self {
+        case .best:
+            5
+        case .good:
+            4
+        case .normal:
+            3
+        case .bad:
+            2
+        case .worst:
+            1
+        case .none:
+            0
+        }
+    }
 }

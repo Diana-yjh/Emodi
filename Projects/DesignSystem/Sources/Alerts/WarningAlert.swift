@@ -26,25 +26,14 @@ public struct WarningAlert: View {
                 Text(title)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                    .font(DesignSystemFontFamily.GmarketSans.medium.swiftUIFont(size: 22))
+                    .font(DesignSystemFontFamily.GmarketSans.medium.swiftUIFont(size: 20))
                     .multilineTextAlignment(.leading)
                     .padding()
                 
                 Spacer()
                 
-                Button {
+                EmodiButton(title: "확인") {
                     onClickOK()
-                } label: {
-                    Text("확인")
-                        .font(DesignSystemFontFamily.GmarketSans.medium.swiftUIFont(size: 18))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity, maxHeight: 60)
-                        .background(
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundStyle(
-                                    DesignSystemAsset.enableButton.swiftUIColor
-                                )
-                        )
                 }
             }
             .padding()

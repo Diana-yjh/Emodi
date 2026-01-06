@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import HomePresentation
+import HomeComposition
 import AnalysisPresentation
 import SettingPresentation
 
@@ -14,11 +14,13 @@ struct EmodiTabView: View {
     @State private var selectedTab: EmodiTab = .home
     @State private var isTabBarHidden: Bool = false
     
+    private var homeFactory = HomeFactoryImplement()
+    
     var body: some View {
         ZStack {
             switch selectedTab {
             case .home:
-                HomeView(isTabBarHidden: $isTabBarHidden)
+                homeFactory.makeHomeView(isTabBarHidden: Binding.constant(false))
             case .analysis:
                 AnalysisView()
             case .setting:

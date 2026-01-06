@@ -28,7 +28,7 @@ public struct ConfirmAlert: View {
                 Text(title)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                    .font(DesignSystemFontFamily.GmarketSans.medium.swiftUIFont(size: 22))
+                    .font(DesignSystemFontFamily.GmarketSans.medium.swiftUIFont(size: 20))
                     .multilineTextAlignment(.leading)
                     .padding()
                 

@@ -8,51 +8,39 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
+let project = Project.makeModule(
     name: "Analysis",
     targets: [
-        .target(
+        // MARK: - AnalysisDomain
+        .makeTarget(
             name: "AnalysisDomain",
-            destinations: .iOS,
             product: .framework,
-            bundleId: .appIdentifier + "AnalysisDomain",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).analysis.domain",
             sources: ["Domain/**"],
-            resources: [],
             dependencies: []
         ),
-        .target(
+        
+        // MARK: - AnalysisData
+        .makeTarget(
             name: "AnalysisData",
-            destinations: .iOS,
             product: .framework,
-            bundleId: .appIdentifier + "AnalysisData",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).analysis.data",
             sources: ["Data/**"],
-            resources: [],
-            dependencies: [
-                .target(name: "AnalysisDomain")
-            ]
-        ),
-        .target(
-            name: "AnalysisPresentation",
-            destinations: Environment.destinations,
-            product: .framework,
-            bundleId: .appIdentifier + "AnalysisPresentation",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
-            sources: ["Presentation/**"],
-            resources: [],
             dependencies: [
                 .target(name: "AnalysisDomain"),
-                .project(target: "DesignSystem", path: "../../DesignSystem")
+                .Module.core  // Firebase 필요시 Core를 통해 접근
+            ]
+        ),
+        
+        // MARK: - AnalysisPresentation
+        .makeTarget(
+            name: "AnalysisPresentation",
+            product: .framework,
+            bundleId: "\(Environment.bundleIdPrefix).analysis.presentation",
+            sources: ["Presentation/**"],
+            dependencies: [
+                .target(name: "AnalysisDomain"),
+                .Module.designSystem
             ]
         )
     ]

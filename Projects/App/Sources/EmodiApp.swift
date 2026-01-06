@@ -7,28 +7,19 @@
 //
 
 import SwiftUI
-import HomePresentation
-import AnalysisPresentation
-import SettingPresentation
 import Splash
 import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct EmodiApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @Environment(\.scenePhase) var scenePhase
-    init() {}
+    init() {
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
             SplashView()
         }
-    }
-}
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure()
-        return true
     }
 }

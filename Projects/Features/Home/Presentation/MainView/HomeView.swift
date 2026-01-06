@@ -11,9 +11,13 @@ import DesignSystem
 public struct HomeView: View {
     @State private var navigationPath: HomeDestinations = .init()
     @State private var opacity: Double = 0
+    @State private var date: Date = .now
     @Binding var isTabBarHidden: Bool
     
-    public init(isTabBarHidden: Binding<Bool>) {
+    let factory: HomeFactory
+    
+    public init(factory: HomeFactory, isTabBarHidden: Binding<Bool>) {
+        self.factory = factory
         _isTabBarHidden = isTabBarHidden
     }
     
@@ -43,7 +47,6 @@ public struct HomeView: View {
                     contentSectionView
                         .padding(.top)
                         .ignoresSafeArea()
-                    
                 }
             }
             .background(
@@ -55,7 +58,7 @@ public struct HomeView: View {
             .navigationDestination(for: Homes.self) { views in
                 switch views {
                 case .addMood:
-                    AddMoodView()
+                    AddMoodView(viewModel: factory.makeAddMoodViewModel(date: self.date))
                 }
             }
         }
@@ -73,7 +76,7 @@ public struct HomeView: View {
                 .shadow(radius: 5)
             
             VStack {
-                DateBar()
+                DateBar(date: $date)
                     .padding(.horizontal, 30)
                     .frame(height: 100)
                 
@@ -93,8 +96,4 @@ public struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-}
-
-#Preview {
-    HomeView(isTabBarHidden: Binding.constant(false))
 }

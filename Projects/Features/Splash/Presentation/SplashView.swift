@@ -6,9 +6,6 @@
 //
 
 import SwiftUI
-import HomePresentation
-import AnalysisPresentation
-import SettingPresentation
 import DesignSystem
 
 typealias SplashDestinations = Array<Splashs>

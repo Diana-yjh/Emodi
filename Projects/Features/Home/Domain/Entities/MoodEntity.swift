@@ -7,18 +7,18 @@
 
 import Foundation
 
-public struct MoodEntity: Codable, Equatable {
-    public let diaryID: Int
-    public let date: Date
+public struct MoodEntity: Codable, Equatable, Sendable {
+    public let date: String
+    public let time: String
     public let mood: Int
-    public let memo: String?
+    public let memo: String
     public let photoURL: String?
     
-    public init(diaryID: Int, date: Date, mood: Int, memo: String?, photoURL: String?) {
-        self.diaryID = diaryID
+    public init(date: String, time: String, mood: Int, memo: String?, photoURL: String?) {
         self.date = date
+        self.time = time
         self.mood = mood
-        self.memo = memo
+        self.memo = memo ?? ""
         self.photoURL = photoURL
     }
 }

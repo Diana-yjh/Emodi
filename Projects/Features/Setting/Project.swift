@@ -8,51 +8,39 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
+let project = Project.makeModule(
     name: "Setting",
     targets: [
-        .target(
+        // MARK: - SettingDomain
+        .makeTarget(
             name: "SettingDomain",
-            destinations: .iOS,
             product: .framework,
-            bundleId: .appIdentifier + "SettingDomain",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).setting.domain",
             sources: ["Domain/**"],
-            resources: [],
             dependencies: []
         ),
-        .target(
+        
+        // MARK: - SettingData
+        .makeTarget(
             name: "SettingData",
-            destinations: .iOS,
             product: .framework,
-            bundleId: .appIdentifier + "SettingData",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).setting.data",
             sources: ["Data/**"],
-            resources: [],
-            dependencies: [
-                .target(name: "SettingDomain")
-            ]
-        ),
-        .target(
-            name: "SettingPresentation",
-            destinations: Environment.destinations,
-            product: .framework,
-            bundleId: .appIdentifier + "SettingPresentation",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
-            sources: ["Presentation/**"],
-            resources: [],
             dependencies: [
                 .target(name: "SettingDomain"),
-                .project(target: "DesignSystem", path: "../../DesignSystem")
+                .Module.core  // Firebase 필요시 Core를 통해 접근
+            ]
+        ),
+        
+        // MARK: - SettingPresentation
+        .makeTarget(
+            name: "SettingPresentation",
+            product: .framework,
+            bundleId: "\(Environment.bundleIdPrefix).setting.presentation",
+            sources: ["Presentation/**"],
+            dependencies: [
+                .target(name: "SettingDomain"),
+                .Module.designSystem
             ]
         )
     ]

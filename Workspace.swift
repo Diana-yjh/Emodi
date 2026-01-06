@@ -11,8 +11,11 @@ let workspace = Workspace(
     name: "Emodi",
     projects: [
         "Projects/App",
-        "Projects/Coordinator",
-        "Projects/Features",
-        "Projects/DesignSystem"
+        "Projects/Core",
+        "Projects/DesignSystem",
+        "Projects/Features/Splash",
+        "Projects/Features/Home",
+        "Projects/Features/Analysis",
+        "Projects/Features/Setting"
     ]
 )

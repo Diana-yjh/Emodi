@@ -7,14 +7,21 @@
 
 import SwiftUI
 import DesignSystem
+import PhotosUI
 
 struct AddMoodView: View {
-    @ObservedObject private var viewModel: AddMoodViewModel = AddMoodViewModel()
+    @StateObject private var viewModel: AddMoodViewModel
     @State private var showAddDiaryPopup = false
     @State private var showSavePopup = false
     @State private var showSaveWarningPopup = false
+    @State private var showSaveFailedPopup = false
+    @State private var saveTrigger = false
     
     @Environment(\.dismiss) private var dismiss
+    
+    init(viewModel: AddMoodViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         VStack {
@@ -45,22 +52,12 @@ struct AddMoodView: View {
                 }
             }
             
-            Button {
+            EmodiButton(title: "저장하기") {
                 if viewModel.canSave {
                     showSavePopup = true
                 } else {
                     showSaveWarningPopup = true
                 }
-            } label: {
-                Text("저장하기")
-                    .font(DSFont.bold(20))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, maxHeight: 60)
-                    .background {
-                        RoundedRectangle(cornerRadius: 15)
-                            .foregroundStyle(DesignSystemAsset.enableButton.swiftUIColor)
-                            .shadow(radius: 3)
-                    }
             }
             .padding()
         }
@@ -98,8 +95,7 @@ struct AddMoodView: View {
                         }
                     
                     ConfirmAlert(title: "작성한 내용을 저장 하시겠습니까?") {
-                        showSavePopup = false
-                        dismiss()
+                        saveTrigger = true
                     } onClickCancel: {
                         showSavePopup = false
                     }
@@ -122,6 +118,56 @@ struct AddMoodView: View {
                     })
                     .padding()
                 }
+            }
+            
+            if showSaveFailedPopup {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.linear(duration: 0.1)) {
+                                showSaveWarningPopup = false
+                            }
+                        }
+                    
+                    WarningAlert(title: "기록 저장에 실패하였습니다", onClickOK: {
+                        showSaveFailedPopup = false
+                        dismiss()
+                    })
+                    .padding()
+                }
+            }
+            
+            if viewModel.showPhotoPermissionAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.linear(duration: 0.1)) {
+                                self.viewModel.showPhotoPermissionAlert = false
+                            }
+                        }
+                    
+                    WarningAlert(title: "사진을 추가하기 위해서 권한을 허용해주세요", onClickOK: {
+                        self.viewModel.openPhotoSettings()
+                        self.viewModel.showPhotoPermissionAlert = false
+                    })
+                    .padding()
+                }
+            }
+        }
+        .task(id: saveTrigger) {
+            guard saveTrigger else { return }
+            
+            let result = await viewModel.saveMoodData()
+            
+            switch result {
+            case .success(_):
+                showSavePopup = false
+                dismiss()
+            case .failure(_):
+                showSavePopup = false
+                showSaveFailedPopup = true
             }
         }
     }
@@ -172,12 +218,28 @@ struct AddMoodView: View {
             
             VStack {
                 Spacer()
-                Button {} label: {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .frame(width: 26, height: 26)
-                        .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
+                
+                if !viewModel.selectedImages.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(viewModel.selectedImages, id: \.self) { images in
+                                ImageCell(onDeleteTap: {
+                                    viewModel.selectedImages.remove(images)
+                                }, uiImage: images)
+                            }
+                        }
+                    }
                 }
+                
+                if viewModel.selectedImages.count < 5 {
+                    PhotosPicker(selection: $viewModel.imageSelections, maxSelectionCount: 5, matching: .images) {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 26, height: 26)
+                            .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
+                    }
+                }
+                
                 Spacer()
             }
             .frame(maxWidth: .infinity, minHeight: 180)
@@ -220,8 +282,4 @@ struct MoodSectionView: View {
                 .shadow(radius: 2)
         }
     }
-}
-
-#Preview {
-    AddMoodView()
 }

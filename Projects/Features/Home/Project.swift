@@ -8,58 +8,61 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
+let project = Project.makeModule(
     name: "Home",
-    packages: [
-        .alamofire,
-        .firebase
-    ],
     targets: [
-        .target(
+        // MARK: - HomeDomain
+        // Entity, Repository Protocol, UseCase 정의
+        // 순수한 비즈니스 로직만 포함 (외부 의존성 없음)
+        .makeTarget(
             name: "HomeDomain",
-            destinations: Environment.destinations,
             product: .framework,
-            bundleId: .appIdentifier + "HomeDomain",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).home.domain",
             sources: ["Domain/**"],
-            resources: [],
             dependencies: []
         ),
-        .target(
+        
+        // MARK: - HomeData
+        // Repository 구현체, DataSource, Firebase/Network 연동
+        // Firebase 의존성은 Core 모듈을 통해 주입받음
+        .makeTarget(
             name: "HomeData",
-            destinations: Environment.destinations,
             product: .framework,
-            bundleId: .appIdentifier + "HomeData",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).home.data",
             sources: ["Data/**"],
-            resources: [],
             dependencies: [
-                .target(name: "HomeDomain")
+                .target(name: "HomeDomain"),
+                // Core 모듈을 통해 Firebase 접근
+                .Module.core
             ]
         ),
-        .target(
+        
+        // MARK: - HomePresentation
+        // View, ViewModel
+        // UI 관련 코드만 포함
+        .makeTarget(
             name: "HomePresentation",
-            destinations: Environment.destinations,
             product: .framework,
-            bundleId: .appIdentifier + "HomePresentation",
-            deploymentTargets: .iOS(
-                "17.0"
-            ),
-            infoPlist: .default,
+            bundleId: "\(Environment.bundleIdPrefix).home.presentation",
             sources: ["Presentation/**"],
-            resources: [],
             dependencies: [
-                .alamofire,
-                .firebaseStorage,
-                .firebaseDatabase,
                 .target(name: "HomeDomain"),
-                .project(target: "DesignSystem", path: "../../DesignSystem")
+                .Module.designSystem
+            ]
+        ),
+        
+        // MARK: - HomeComposition
+        // 의존성 주입 및 Factory
+        // 모든 레이어를 조합
+        .makeTarget(
+            name: "HomeComposition",
+            product: .framework,
+            bundleId: "\(Environment.bundleIdPrefix).home.composition",
+            sources: ["Composition/**"],
+            dependencies: [
+                .target(name: "HomeDomain"),
+                .target(name: "HomeData"),
+                .target(name: "HomePresentation")
             ]
         )
     ]
