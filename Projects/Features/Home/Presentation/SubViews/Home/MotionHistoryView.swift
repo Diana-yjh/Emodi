@@ -41,8 +41,12 @@ struct MotionHistoryView: View {
             }
             
             ScrollView {
-                ForEach(historyList, id: \.self) { list in
-                    MoodCellView(mood: list.mood, memo: list.memo, time: list.time)
+                if historyList.isEmpty {
+                    DefaultCellView()
+                } else {
+                    ForEach(historyList, id: \.self) { list in
+                        MoodCellView(mood: list.mood, memo: list.memo, time: list.time)
+                    }
                 }
             }
             .padding(.top, -40)
@@ -92,6 +96,35 @@ struct MoodCellView: View {
     }
 }
 
+struct DefaultCellView: View {
+    var body: some View {
+        HStack(alignment: .bottom) {
+            Image(uiImage: DesignSystemAsset.timeLine.image)
+                .frame(width: 30)
+                .padding(.horizontal)
+            
+            Image(uiImage: MoodType.none.image)
+                .frame(width: 50, height: 24)
+            
+            VStack(alignment: .leading) {
+                Text("기록 없음")
+                    .font(DSFont.bold(18))
+                    .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
+                    .padding(.bottom, 5)
+                    .padding(.horizontal)
+                
+                Text("오늘의 기분은 어떤가요?")
+                    .font(DSFont.medium(16))
+                    .foregroundStyle(.gray)
+                    .padding(.horizontal)
+            }
+            .frame(height: 24)
+            Spacer()
+        }
+        .frame(height: 100)
+    }
+}
+
 #Preview {
-//    MotionHistoryView(onAddButtonTap: {})
+    //    MotionHistoryView(onAddButtonTap: {})
 }

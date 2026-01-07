@@ -51,6 +51,24 @@ public struct HomeView: View {
                         .ignoresSafeArea()
                 }
             }
+            .overlay {
+                if viewModel.showAddMoodAlert {
+                    ZStack {
+                        Color.black.opacity(0.4)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation(.linear(duration: 0.1)) {
+                                    self.viewModel.showAddMoodAlert = false
+                                }
+                            }
+                        
+                        WarningAlert(title: "과거의 기분은 추가할 수 없어요", onClickOK: {
+                            self.viewModel.showAddMoodAlert = false
+                        })
+                        .padding()
+                    }
+                }
+            }
             .background(
                 Image(uiImage: DesignSystemAsset.background.image)
                     .resizable()
@@ -95,14 +113,19 @@ public struct HomeView: View {
                     .onChange(of: date) { newDate in
                         viewModel.selectedDate = "\(newDate.toYear()).\(newDate.toMonthDate())"
                         Task {
+                            viewModel.clearMoodList()
                             await viewModel.fetchMoodLists()
                         }
                     }
                 
                 HStack() {
                     MotionHistoryView(historyList: $viewModel.moodList, onAddButtonTap: {
-                        self.isTabBarHidden = true
-                        navigationPath.append(.addMood)
+                        if date.toMonthDate() == Date().toMonthDate() {
+                            self.isTabBarHidden = true
+                            navigationPath.append(.addMood)
+                        } else {
+                            self.viewModel.showAddMoodAlert = true
+                        }
                     })
                 }
                 .padding(.horizontal)

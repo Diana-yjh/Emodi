@@ -12,6 +12,7 @@ import HomeDomain
 public class HomeViewModel: ObservableObject {
     @Published var selectedDate: String = "\(Date().toYear()).\(Date().toMonthDate())"
     @Published var moodList: [Mood] = []
+    @Published var showAddMoodAlert: Bool = false
     
     private let moodUseCase: MoodUseCaseProtocol
     
@@ -38,5 +39,9 @@ public class HomeViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func clearMoodList() {
+        moodList.removeAll()
     }
 }
