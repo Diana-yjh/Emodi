@@ -11,7 +11,7 @@ import DesignSystem
 
 struct EmodiCalendarView: View {
     @Binding var dateValues: [Date?]
-    
+    @Binding var selectedDate: Date
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 22)
@@ -21,8 +21,8 @@ struct EmodiCalendarView: View {
             VStack {
                 WeekDayHeaderView()
                     .padding(.bottom)
-                DateView(dateValues: $dateValues) {
-                    
+                DateView(dateValues: $dateValues, selectedDate: $selectedDate, isDiaryAvailable: false) { date in
+                    self.selectedDate = date
                 }
             }
             .padding()
@@ -39,25 +39,38 @@ struct WeekDayHeaderView: View {
                 Text(day)
                     .font(DSFont.bold(16))
                     .frame(maxWidth: .infinity)
-                    .foregroundStyle(day == "일" ? DesignSystemAsset.enableButton.swiftUIColor : DesignSystemAsset.menuButton.swiftUIColor)
+                    .foregroundStyle(color(day: day))
             }
+        }
+        .frame(height: 40)
+    }
+    
+    func color(day: String) -> Color {
+        switch day {
+        case "토":
+            return DesignSystemAsset.lightPrimary.swiftUIColor
+        case "일":
+            return DesignSystemAsset.primary.swiftUIColor
+        default:
+            return DesignSystemAsset.gray.swiftUIColor
         }
     }
 }
 
 struct DateView: View {
     @Binding var dateValues: [Date?]
-    var isDiaryAvailable: Bool = false
+    @Binding var selectedDate: Date
+    var isDiaryAvailable: Bool
     
-    var onDateSelect: () -> Void
+    var onDateSelect: (Date) -> Void
     
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 45) {
+        LazyVGrid(columns: columns, spacing: 30) {
             ForEach(dateValues, id: \.self) { value in
                 if let value = value {
-                    dateButton(date: value.toString(in: "dd"))
+                    dateButton(date: value)
                 } else {
                     Text("").hidden()
                 }
@@ -65,17 +78,32 @@ struct DateView: View {
         }
     }
     
-    func dateButton(date: String) -> some View {
+    func dateButton(date: Date) -> some View {
         Button {
-            onDateSelect()
+            onDateSelect(date)
         } label: {
-            Text(date)
-                .font(DSFont.medium(14))
-                .foregroundStyle(.gray)
+            VStack {
+                Text(date.toString(in: "dd"))
+                    .font(date == selectedDate ? DSFont.bold(16) : DSFont.medium(16))
+                    .foregroundStyle(date == selectedDate ? DesignSystemAsset.primary.swiftUIColor : .gray)
+                
+                Circle()
+                    .frame(width: 5, height: 5)
+                    .foregroundStyle(isDiaryAvailable ? DesignSystemAsset.primary.swiftUIColor : .clear)
+            }
+            
+        }
+        .overlay {
+            if date == selectedDate {
+                Circle()
+                    .foregroundStyle(DesignSystemAsset.primary.swiftUIColor)
+                    .frame(width: 45, height: 45)
+                    .opacity(0.2)
+            }
         }
     }
 }
 
 #Preview {
-    EmodiCalendarView(dateValues: Binding.constant([]))
+    EmodiCalendarView(dateValues: Binding.constant([]), selectedDate: Binding.constant(Date()))
 }

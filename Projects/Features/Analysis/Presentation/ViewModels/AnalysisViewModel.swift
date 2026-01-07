@@ -11,19 +11,18 @@ import SwiftUI
 public class AnalysisViewModel: ObservableObject {
     @Published var month: Date = Date()
     @Published var days: [Date?] = []
+    @Published var selectedDate: Date = Date()
     
     var calendarHeight: CGFloat {
         let rowCount = Int(ceil(Double(days.count) / 7.0))
         
         let rowHeight: CGFloat = 35      // 날짜 버튼 높이
-        let rowSpacing: CGFloat = 40     // LazyVGrid spacing
-        let headerHeight: CGFloat = 30   // 요일 헤더
-        let verticalPadding: CGFloat = 0
+        let rowSpacing: CGFloat = 30     // LazyVGrid spacing
+        let headerHeight: CGFloat = 40   // 요일 헤더
         
         return CGFloat(rowCount) * rowHeight
         + CGFloat(rowCount - 1) * rowSpacing
         + headerHeight
-        + verticalPadding
     }
     
     func changeMonth(by value: Int) {

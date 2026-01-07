@@ -31,7 +31,7 @@ public struct AnalysisView: View {
                     })
                     .frame(maxWidth: 300)
                     
-                    EmodiCalendarView(dateValues: $viewModel.days)
+                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate)
                         .frame(height: viewModel.calendarHeight)
                         .padding()
                     
@@ -91,22 +91,6 @@ struct ChangeMonthView: View {
             }
         }
         .shadow(radius: 5)
-    }
-}
-
-struct EmodiAnalysisView: View {
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Analytics")
-                .font(DSFont.bold(18))
-                .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
-                .padding(.vertical)
-                .padding(.leading, 6)
-            
-            RoundedRectangle(cornerRadius: 22)
-                .foregroundStyle(.white)
-                .shadow(radius: 2)
-        }
     }
 }
 
