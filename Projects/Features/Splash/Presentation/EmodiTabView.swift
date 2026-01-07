@@ -15,14 +15,14 @@ struct EmodiTabView: View {
     @State private var isTabBarHidden: Bool = false
     
     private var homeFactory = HomeFactoryImplement()
-    
+    private var analysisFactory = AnalysisFactoryImplement()
     var body: some View {
         ZStack {
             switch selectedTab {
             case .home:
                 homeFactory.makeHomeView(isTabBarHidden: Binding.constant(false))
             case .analysis:
-                AnalysisView()
+                analysisFactory.makeAnalysisView()
             case .setting:
                 SettingView()
             }

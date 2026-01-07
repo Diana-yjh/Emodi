@@ -9,7 +9,11 @@ import SwiftUI
 import DesignSystem
 
 public struct AnalysisView: View {
-    public init() {}
+    @ObservedObject var viewModel: AnalysisViewModel
+    
+    public init(viewModel: AnalysisViewModel) {
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+    }
     
     public var body: some View {
         ZStack {
@@ -18,11 +22,17 @@ public struct AnalysisView: View {
                     .frame(height: 30)
                 
                 ScrollView {
-                    ChangeMonthView(onTabBeforeButton: {}, onTabAfterButton: {})
-                        .frame(width: 200)
+                    ChangeMonthView(month: $viewModel.month, onTabBeforeButton: {
+                        viewModel.changeMonth(by: -1)
+                        viewModel.extractDays(currentMonth: viewModel.month)
+                    }, onTabAfterButton: {
+                        viewModel.changeMonth(by: +1)
+                        viewModel.extractDays(currentMonth: viewModel.month)
+                    })
+                    .frame(maxWidth: 300)
                     
-                    EmodiCalendarView()
-                        .frame(height: 400)
+                    EmodiCalendarView(dateValues: $viewModel.days)
+                        .frame(height: viewModel.calendarHeight)
                         .padding()
                     
                     EmodiAnalysisView()
@@ -34,6 +44,9 @@ public struct AnalysisView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .onAppear {
+            viewModel.extractDays(currentMonth: viewModel.month)
+        }
         .background {
             Image(uiImage: DesignSystemAsset.analysisBackground.image)
                 .resizable()
@@ -44,13 +57,14 @@ public struct AnalysisView: View {
 }
 
 struct ChangeMonthView: View {
+    @Binding var month: Date
     var onTabBeforeButton: () -> Void
     var onTabAfterButton: () -> Void
     
     var body: some View {
         HStack {
             Button {
-                
+                onTabBeforeButton()
             } label: {
                 Image(systemName: "chevron.left.circle")
                     .resizable()
@@ -60,7 +74,7 @@ struct ChangeMonthView: View {
             
             Spacer()
             
-            Text("July")
+            Text(month.toString(in: "yyyy년 MM월"))
                 .font(DSFont.bold(26))
                 .foregroundStyle(.white)
                 .frame(height: 40)
@@ -68,7 +82,7 @@ struct ChangeMonthView: View {
             Spacer()
             
             Button {
-                
+                onTabAfterButton()
             } label: {
                 Image(systemName: "chevron.right.circle")
                     .resizable()
@@ -77,16 +91,6 @@ struct ChangeMonthView: View {
             }
         }
         .shadow(radius: 5)
-    }
-}
-
-struct EmodiCalendarView: View {
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 22)
-                .foregroundStyle(.white)
-                .shadow(radius: 2)
-        }
     }
 }
 
@@ -107,5 +111,5 @@ struct EmodiAnalysisView: View {
 }
 
 #Preview {
-    AnalysisView()
+    AnalysisView(viewModel: AnalysisViewModel())
 }
