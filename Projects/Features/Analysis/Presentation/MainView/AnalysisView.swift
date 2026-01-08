@@ -11,7 +11,10 @@ import DesignSystem
 public struct AnalysisView: View {
     @ObservedObject var viewModel: AnalysisViewModel
     
-    public init(viewModel: AnalysisViewModel) {
+    let factory: AnalysisFactory
+    
+    public init(factory: AnalysisFactory, viewModel: AnalysisViewModel) {
+        self.factory = factory
         _viewModel = ObservedObject(wrappedValue: viewModel)
     }
     
@@ -31,7 +34,7 @@ public struct AnalysisView: View {
                     })
                     .frame(maxWidth: 300)
                     
-                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate)
+                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate, daysWithDiary: $viewModel.daysWithDiary)
                         .frame(height: viewModel.calendarHeight)
                         .padding()
                     
@@ -46,6 +49,30 @@ public struct AnalysisView: View {
         }
         .onAppear {
             viewModel.extractDays(currentMonth: viewModel.month)
+            
+            Task {
+                let result = await viewModel.getCalendarMoodData(date: viewModel.month)
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
+        .onChange(of: viewModel.month) {
+            Task {
+                viewModel.resetDaysWithDiary()
+                let result = await viewModel.getCalendarMoodData(date: viewModel.month)
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
+            }
         }
         .background {
             Image(uiImage: DesignSystemAsset.analysisBackground.image)
@@ -92,8 +119,4 @@ struct ChangeMonthView: View {
         }
         .shadow(radius: 5)
     }
-}
-
-#Preview {
-    AnalysisView(viewModel: AnalysisViewModel())
 }

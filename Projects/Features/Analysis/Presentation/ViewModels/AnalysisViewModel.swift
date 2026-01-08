@@ -7,11 +7,15 @@
 //
 
 import SwiftUI
+import AnalysisDomain
 
 public class AnalysisViewModel: ObservableObject {
     @Published var month: Date = Date()
     @Published var days: [Date?] = []
     @Published var selectedDate: Date = Date()
+    @Published var daysWithDiary: [String?] = []
+    
+    private let moodUseCase: MoodUseCaseProtocol
     
     var calendarHeight: CGFloat {
         let rowCount = Int(ceil(Double(days.count) / 7.0))
@@ -23,6 +27,10 @@ public class AnalysisViewModel: ObservableObject {
         return CGFloat(rowCount) * rowHeight
         + CGFloat(rowCount - 1) * rowSpacing
         + headerHeight
+    }
+    
+    public init(moodUseCase: MoodUseCaseProtocol) {
+        self.moodUseCase = moodUseCase
     }
     
     func changeMonth(by value: Int) {
@@ -45,5 +53,31 @@ public class AnalysisViewModel: ObservableObject {
         }
         
         self.days = days
+    }
+    
+    @MainActor
+    func getCalendarMoodData(date: Date) async -> AnalysisResult<[MoodEntity], AnalysisError> {
+        let year = date.toInt(in: "yyyy")
+        let month = date.toInt(in: "M")
+        
+        do {
+            guard let startAndEnd = Calendar.current.monthStartAndEnd(year: year, month: month) else{
+                return .failure(.getMoodDateFailed)
+            }
+            
+            let result = try await moodUseCase.getMonthMood(startTime: startAndEnd.start, endTime: startAndEnd.end)
+            
+            daysWithDiary = result.map { item in
+                item.getTime().toString(in: "dd")
+            }
+            
+            return .success(result)
+        } catch {
+            return .failure(.getMoodDateFailed)
+        }
+    }
+    
+    func resetDaysWithDiary() {
+        daysWithDiary = []
     }
 }

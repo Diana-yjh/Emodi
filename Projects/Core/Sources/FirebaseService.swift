@@ -9,6 +9,24 @@
 import Foundation
 import FirebaseFirestore
 
+public struct FirestoreFilter {
+    let field: String
+    let op: QueryOperator
+    let value: Any
+    
+    public init(field: String, op: QueryOperator, value: Any) {
+        self.field = field
+        self.op = op
+        self.value = value
+    }
+}
+
+public enum QueryOperator {
+    case equal
+    case greaterThanOrEqual
+    case lessThan
+}
+
 public final class FirestoreService: FirestoreServiceProtocol, @unchecked Sendable {
     private var db: Firestore
     
@@ -25,14 +43,21 @@ public final class FirestoreService: FirestoreServiceProtocol, @unchecked Sendab
     
     public func getDocuments(
         collection: String,
-        filters: [(field: String, value: Any)],
+        filters: [FirestoreFilter],
         orderBy: String?,
         descending: Bool
     ) async throws -> FirestoreQueryResult {
         var query: Query = db.collection(collection)
         
         for filter in filters {
-            query = query.whereField(filter.field, isEqualTo: filter.value)
+            switch filter.op {
+            case .equal:
+                query = query.whereField(filter.field, isEqualTo: filter.value)
+            case .greaterThanOrEqual:
+                query = query.whereField(filter.field, isGreaterThanOrEqualTo: filter.value)
+            case .lessThan:
+                query = query.whereField(filter.field, isLessThan: filter.value)
+            }
         }
         
         if let orderField = orderBy {

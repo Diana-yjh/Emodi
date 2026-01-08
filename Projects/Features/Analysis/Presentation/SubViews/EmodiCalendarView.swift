@@ -12,6 +12,8 @@ import DesignSystem
 struct EmodiCalendarView: View {
     @Binding var dateValues: [Date?]
     @Binding var selectedDate: Date
+    @Binding var daysWithDiary: [String?]
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 22)
@@ -21,7 +23,7 @@ struct EmodiCalendarView: View {
             VStack {
                 WeekDayHeaderView()
                     .padding(.bottom)
-                DateView(dateValues: $dateValues, selectedDate: $selectedDate, isDiaryAvailable: false) { date in
+                DateView(dateValues: $dateValues, selectedDate: $selectedDate, daysWithDiary: $daysWithDiary, isDiaryAvailable: false) { date in
                     self.selectedDate = date
                 }
             }
@@ -60,6 +62,8 @@ struct WeekDayHeaderView: View {
 struct DateView: View {
     @Binding var dateValues: [Date?]
     @Binding var selectedDate: Date
+    @Binding var daysWithDiary: [String?]
+    
     var isDiaryAvailable: Bool
     
     var onDateSelect: (Date) -> Void
@@ -89,7 +93,7 @@ struct DateView: View {
                 
                 Circle()
                     .frame(width: 5, height: 5)
-                    .foregroundStyle(isDiaryAvailable ? DesignSystemAsset.primary.swiftUIColor : .clear)
+                    .foregroundStyle(daysWithDiary.contains(date.toString(in: "dd")) ? DesignSystemAsset.primary.swiftUIColor : .clear)
             }
             
         }
@@ -102,8 +106,4 @@ struct DateView: View {
             }
         }
     }
-}
-
-#Preview {
-    EmodiCalendarView(dateValues: Binding.constant([]), selectedDate: Binding.constant(Date()))
 }

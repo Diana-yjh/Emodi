@@ -7,7 +7,7 @@
 
 import SwiftUI
 import HomeComposition
-import AnalysisPresentation
+import AnalysisComposition
 import SettingPresentation
 
 struct EmodiTabView: View {
@@ -16,6 +16,7 @@ struct EmodiTabView: View {
     
     private var homeFactory = HomeFactoryImplement()
     private var analysisFactory = AnalysisFactoryImplement()
+    
     var body: some View {
         ZStack {
             switch selectedTab {

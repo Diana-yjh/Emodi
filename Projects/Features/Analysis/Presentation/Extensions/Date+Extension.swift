@@ -17,6 +17,16 @@ extension Date {
         return formatter.string(from: self)
     }
     
+    func toInt(in format: String) -> Int {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        formatter.timeZone = .current
+        formatter.locale = .current
+        
+        guard let dateComponentInt = Int(formatter.string(from: self)) else { return 0 }
+        
+        return dateComponentInt
+    }
     func getAllDays() -> [Date?] {
         let calendar = Calendar.current
         let startDate = calendar.date(from: calendar.dateComponents([.year, .month], from: self))!

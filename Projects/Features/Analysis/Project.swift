@@ -42,6 +42,18 @@ let project = Project.makeModule(
                 .target(name: "AnalysisDomain"),
                 .Module.designSystem
             ]
+        ),
+        
+        .makeTarget(
+            name: "AnalysisComposition",
+            product: .framework,
+            bundleId: "\(Environment.bundleIdPrefix).analysis.composition",
+            sources: ["Composition/**"],
+            dependencies: [
+                .target(name: "AnalysisDomain"),
+                .target(name: "AnalysisData"),
+                .target(name: "AnalysisPresentation")
+            ]
         )
     ]
 )

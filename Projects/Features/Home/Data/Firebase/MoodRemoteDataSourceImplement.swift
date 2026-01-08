@@ -33,8 +33,8 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
         let result = try await firestoreService.getDocuments(
             collection: "mood",
             filters: [
-                (field: "user_id", value: UserManager.shared.userID),
-                (field: "date", value: date)
+                FirestoreFilter(field: "user_id", op: .equal, value: UserManager.shared.userID),
+                FirestoreFilter(field: "date", op: .equal, value: date)
             ],
             orderBy: "time",
             descending: false
