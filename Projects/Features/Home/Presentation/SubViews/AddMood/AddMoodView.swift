@@ -31,7 +31,7 @@ struct AddMoodView: View {
             
             ScrollView {
                 VStack {
-                    Text("How do you feel Now?")
+                    Text("오늘 기분은 어떠세요?")
                         .font(DSFont.bold(26))
                     
                     MoodSectionView(selected: viewModel.selectedMood) { mood in

@@ -42,6 +42,18 @@ let project = Project.makeModule(
                 .target(name: "SettingDomain"),
                 .Module.designSystem
             ]
+        ),
+        
+        .makeTarget(
+            name: "SettingComposition",
+            product: .framework,
+            bundleId: "\(Environment.bundleIdPrefix).setting.composition",
+            sources: ["Composition/**"],
+            dependencies: [
+                .target(name: "SettingDomain"),
+                .target(name: "SettingData"),
+                .target(name: "SettingPresentation")
+            ]
         )
     ]
 )

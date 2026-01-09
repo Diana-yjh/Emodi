@@ -30,7 +30,7 @@ struct MotionHistoryView: View {
                         .frame(width: 260, height: 100)
                         .padding([.top, .trailing], 10)
                     
-                    Text("Add new mood diary!")
+                    Text("지금의 기분을 기록해보세요!")
                         .font(DSFont.bold(14))
                         .foregroundStyle(.white)
                         .padding(.trailing, 24)
@@ -87,6 +87,10 @@ struct MoodCellView: View {
                 Text(memo)
                     .font(DSFont.medium(16))
                     .foregroundStyle(.gray)
+                    .lineLimit(3)
+                    .lineSpacing(3)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal)
             }
             .frame(height: 24)

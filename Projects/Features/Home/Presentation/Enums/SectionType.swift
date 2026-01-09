@@ -24,11 +24,11 @@ enum SectionType {
     var title: String {
         switch self {
         case .mood:
-            "Mood"
+            "기분"
         case .diary:
-            "Diary"
+            "일기"
         case .photo:
-            "Photo"
+            "사진"
         }
     }
 }

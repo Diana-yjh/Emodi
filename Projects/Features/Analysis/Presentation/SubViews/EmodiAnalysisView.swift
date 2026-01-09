@@ -18,11 +18,11 @@ struct EmodiAnalysisView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Analytics")
+            Text("분석표")
                 .font(DSFont.bold(18))
                 .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
                 .padding(.vertical)
-                .padding(.leading, 6)
+                .padding([.leading, .top], 6)
             ZStack {
                 RoundedRectangle(cornerRadius: 22)
                     .foregroundStyle(.white)
