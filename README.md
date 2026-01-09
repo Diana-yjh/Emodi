@@ -7,9 +7,10 @@
 하루의 기분을 기록하고 시간에 따른 기분 변화를 관찰할 수 있습니다.</br>
 캘린더와 차트를 통해 특정 기간동안의 내 기분 변화를 확인할 수 있습니다.
 - 프로젝트 화면</br>
-<img width="200" alt="IMG_7653" src="https://github.com/user-attachments/assets/baf96b45-b47e-44ca-b5e7-c279eea3be65" />
-<img width="200" alt="IMG_7655" src="https://github.com/user-attachments/assets/4cec1ab4-597d-41b1-be12-8e6ffe4702ec" />
-<img width="200" alt="IMG_7654" src="https://github.com/user-attachments/assets/e26a4b1f-083a-4e0e-bbd0-f8c3c4003cef" />
+<img width="200" alt="IMG_7663" src="https://github.com/user-attachments/assets/634bb956-bb34-4de3-a7f1-6864159818fe" />
+<img width="200" alt="IMG_7666" src="https://github.com/user-attachments/assets/dad404ed-601b-4f38-b810-13569855cf7a" />
+<img width="200" alt="IMG_7664" src="https://github.com/user-attachments/assets/eff191fc-368f-4d63-b2b6-f835b1e8705f" />
+<img width="200" alt="IMG_7665" src="https://github.com/user-attachments/assets/4acd1b06-3ebe-482f-ac36-bee8fad47404" />
 
 ### 기술 스택
 - 언어: Swift
