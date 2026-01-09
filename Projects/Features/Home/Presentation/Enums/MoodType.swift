@@ -14,11 +14,11 @@ enum MoodType: Hashable {
     // 숫자로 MoodType 생성
     init(index: Int) {
         switch index {
-        case 5: self = .best
-        case 4: self = .good
-        case 3: self = .normal
-        case 2: self = .bad
-        case 1: self = .worst
+        case 4: self = .best
+        case 3: self = .good
+        case 2: self = .normal
+        case 1: self = .bad
+        case 0: self = .worst
         default: self = .none
         }
     }
@@ -50,12 +50,12 @@ enum MoodType: Hashable {
     
     var index: Int {
         switch self {
-        case .best: 5
-        case .good: 4
-        case .normal: 3
-        case .bad: 2
-        case .worst: 1
-        case .none: 0
+        case .best: 4
+        case .good: 3
+        case .normal: 2
+        case .bad: 1
+        case .worst: 0
+        case .none: -1
         }
     }
     

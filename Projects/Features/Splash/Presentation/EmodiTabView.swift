@@ -7,7 +7,7 @@
 
 import SwiftUI
 import HomeComposition
-import AnalysisPresentation
+import AnalysisComposition
 import SettingPresentation
 
 struct EmodiTabView: View {
@@ -15,6 +15,7 @@ struct EmodiTabView: View {
     @State private var isTabBarHidden: Bool = false
     
     private var homeFactory = HomeFactoryImplement()
+    private var analysisFactory = AnalysisFactoryImplement()
     
     var body: some View {
         ZStack {
@@ -22,7 +23,7 @@ struct EmodiTabView: View {
             case .home:
                 homeFactory.makeHomeView(isTabBarHidden: Binding.constant(false))
             case .analysis:
-                AnalysisView()
+                analysisFactory.makeAnalysisView()
             case .setting:
                 SettingView()
             }

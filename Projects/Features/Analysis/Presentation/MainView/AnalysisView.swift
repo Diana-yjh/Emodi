@@ -9,7 +9,14 @@ import SwiftUI
 import DesignSystem
 
 public struct AnalysisView: View {
-    public init() {}
+    @ObservedObject var viewModel: AnalysisViewModel
+    
+    let factory: AnalysisFactory
+    
+    public init(factory: AnalysisFactory, viewModel: AnalysisViewModel) {
+        self.factory = factory
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+    }
     
     public var body: some View {
         ZStack {
@@ -18,20 +25,70 @@ public struct AnalysisView: View {
                     .frame(height: 30)
                 
                 ScrollView {
-                    ChangeMonthView(onTabBeforeButton: {}, onTabAfterButton: {})
-                        .frame(width: 200)
+                    ChangeMonthView(month: $viewModel.month, onTabBeforeButton: {
+                        viewModel.changeMonth(by: -1)
+                        viewModel.extractDays(currentMonth: viewModel.month)
+                    }, onTabAfterButton: {
+                        viewModel.changeMonth(by: +1)
+                        viewModel.extractDays(currentMonth: viewModel.month)
+                    })
+                    .frame(maxWidth: 300)
                     
-                    EmodiCalendarView()
-                        .frame(height: 400)
+                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate, daysWithDiary: $viewModel.daysWithDiary) { date in
+                        self.viewModel.selectedDate = date
+                        
+                        Task {
+                            await self.viewModel.getSelectedDateDiary()
+                        }
+                    }
+                        .frame(height: viewModel.calendarHeight)
                         .padding()
                     
-                    EmodiAnalysisView()
-                        .frame(height: 220)
+                    EmodiAnalysisView(diaryList: $viewModel.diariesForSelectedDate, selectedDate: $viewModel.selectedDate)
+                        .frame(height: 180)
                         .padding()
                     
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .onAppear {
+            viewModel.extractDays(currentMonth: viewModel.month)
+            
+            Task {
+                let result = await viewModel.getCalendarMoodData(date: viewModel.month)
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+            
+            Task {
+                let result = await viewModel.getSelectedDateDiary()
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
+        .onChange(of: viewModel.month) {
+            Task {
+                viewModel.resetDaysWithDiary()
+                let result = await viewModel.getCalendarMoodData(date: viewModel.month)
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
         .background {
@@ -44,13 +101,14 @@ public struct AnalysisView: View {
 }
 
 struct ChangeMonthView: View {
+    @Binding var month: Date
     var onTabBeforeButton: () -> Void
     var onTabAfterButton: () -> Void
     
     var body: some View {
         HStack {
             Button {
-                
+                onTabBeforeButton()
             } label: {
                 Image(systemName: "chevron.left.circle")
                     .resizable()
@@ -60,7 +118,7 @@ struct ChangeMonthView: View {
             
             Spacer()
             
-            Text("July")
+            Text(month.toString(in: "yyyy년 MM월"))
                 .font(DSFont.bold(26))
                 .foregroundStyle(.white)
                 .frame(height: 40)
@@ -68,7 +126,7 @@ struct ChangeMonthView: View {
             Spacer()
             
             Button {
-                
+                onTabAfterButton()
             } label: {
                 Image(systemName: "chevron.right.circle")
                     .resizable()
@@ -78,34 +136,4 @@ struct ChangeMonthView: View {
         }
         .shadow(radius: 5)
     }
-}
-
-struct EmodiCalendarView: View {
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 22)
-                .foregroundStyle(.white)
-                .shadow(radius: 2)
-        }
-    }
-}
-
-struct EmodiAnalysisView: View {
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Analytics")
-                .font(DSFont.bold(18))
-                .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
-                .padding(.vertical)
-                .padding(.leading, 6)
-            
-            RoundedRectangle(cornerRadius: 22)
-                .foregroundStyle(.white)
-                .shadow(radius: 2)
-        }
-    }
-}
-
-#Preview {
-    AnalysisView()
 }

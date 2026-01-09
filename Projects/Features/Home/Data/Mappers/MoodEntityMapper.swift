@@ -22,8 +22,8 @@ public struct MoodEntityMapper {
             return nil
         }
         
-        // FIRTimestamp -> Date 변환
         let time: Date
+        
         if let timestamp = data["time"] as? Timestamp {
             time = timestamp.dateValue()
         } else {

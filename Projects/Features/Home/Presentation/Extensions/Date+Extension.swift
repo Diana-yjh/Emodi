@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Date {
     func toString(in format: String) -> String {
-        if self.toMonthDate() == Date().toMonthDate() && self.toYear() == Date().toYear() { return "Today" }
+        if self.toMonthDate() == Date().toMonthDate() && self.toYear() == Date().toYear() { return "오늘" }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format

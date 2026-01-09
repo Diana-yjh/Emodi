@@ -24,7 +24,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .project(target: "HomeComposition", path: "../../Features/Home"),
-                .project(target: "AnalysisPresentation", path: "../../Features/Analysis"),
+                .project(target: "AnalysisComposition", path: "../../Features/Analysis"),
                 .project(target: "SettingPresentation", path: "../../Features/Setting"),
                 .project(target: "DesignSystem", path: "../../DesignSystem")
             ]

@@ -39,7 +39,7 @@ public protocol FirestoreServiceProtocol: Sendable {
     
     func getDocuments(
         collection: String,
-        filters: [(field: String, value: Any)],
+        filters: [FirestoreFilter],
         orderBy: String?,
         descending: Bool
     ) async throws -> FirestoreQueryResult

@@ -76,7 +76,7 @@ extension AddMoodViewModel {
         photoUseCase.openSettings()
     }
     
-    func saveMoodData() async -> EmodiResult<Void, EmodiError> {
+    func saveMoodData() async -> HomeResult<Void, HomeError> {
         let mood = MoodEntity(
             time: Date(),
             date: "\(Date().toYear()).\(Date().toMonthDate())",

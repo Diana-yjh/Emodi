@@ -7,12 +7,12 @@
 
 import Foundation
 
-@frozen public enum EmodiResult<Success, EmodiError> where EmodiError : Error {
+@frozen public enum HomeResult<Success, HomeError> where HomeError : Error {
     case success(Success)
-    case failure(EmodiError)
+    case failure(HomeError)
 }
 
-public enum EmodiError: Error {
+public enum HomeError: Error {
     case addMoodDiaryFailed
     case fetchMoodDiaryFailed
     case deleteMoodDiaryFailed
