@@ -47,7 +47,7 @@ struct DiaryView: View {
                 diaryFinished(diary)
                 showAddDiaryPopup = false
             } label: {
-                Text("Add")
+                Text("추가")
                     .font(DSFont.bold(20))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, maxHeight: 60)

@@ -25,7 +25,7 @@ let project = Project(
             dependencies: [
                 .project(target: "HomeComposition", path: "../../Features/Home"),
                 .project(target: "AnalysisComposition", path: "../../Features/Analysis"),
-                .project(target: "SettingPresentation", path: "../../Features/Setting"),
+                .project(target: "SettingComposition", path: "../../Features/Setting"),
                 .project(target: "DesignSystem", path: "../../DesignSystem")
             ]
         )

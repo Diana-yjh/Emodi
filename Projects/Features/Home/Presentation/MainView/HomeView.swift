@@ -31,12 +31,12 @@ public struct HomeView: View {
                         .frame(height: 30)
                     
                     Group {
-                        Text("Daily Mood")
+                        Text("오늘의 기분")
                             .font(DSFont.bold(30))
                             .foregroundStyle(.white)
                             .padding(.top)
                             .shadow(radius: 5)
-                        Text("How are you today?")
+                        Text("오늘은 어떤 하루가 될까?")
                             .font(DSFont.medium(16))
                             .foregroundStyle(.white)
                             .padding(.top, -5)
