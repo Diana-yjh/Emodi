@@ -87,6 +87,10 @@ struct MoodCellView: View {
                 Text(memo)
                     .font(DSFont.medium(16))
                     .foregroundStyle(.gray)
+                    .lineLimit(3)
+                    .lineSpacing(3)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal)
             }
             .frame(height: 24)
