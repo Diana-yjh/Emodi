@@ -34,12 +34,18 @@ public struct AnalysisView: View {
                     })
                     .frame(maxWidth: 300)
                     
-                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate, daysWithDiary: $viewModel.daysWithDiary)
+                    EmodiCalendarView(dateValues: $viewModel.days, selectedDate: $viewModel.selectedDate, daysWithDiary: $viewModel.daysWithDiary) { date in
+                        self.viewModel.selectedDate = date
+                        
+                        Task {
+                            await self.viewModel.getSelectedDateDiary()
+                        }
+                    }
                         .frame(height: viewModel.calendarHeight)
                         .padding()
                     
-                    EmodiAnalysisView()
-                        .frame(height: 220)
+                    EmodiAnalysisView(diaryList: $viewModel.diariesForSelectedDate, selectedDate: $viewModel.selectedDate)
+                        .frame(height: 180)
                         .padding()
                     
                     Spacer()
@@ -52,6 +58,17 @@ public struct AnalysisView: View {
             
             Task {
                 let result = await viewModel.getCalendarMoodData(date: viewModel.month)
+                
+                switch result {
+                case .success(let data):
+                    print(data)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+            
+            Task {
+                let result = await viewModel.getSelectedDateDiary()
                 
                 switch result {
                 case .success(let data):

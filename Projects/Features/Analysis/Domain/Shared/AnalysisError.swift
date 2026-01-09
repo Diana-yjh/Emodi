@@ -15,4 +15,5 @@ import Foundation
 
 public enum AnalysisError: Error {
     case getMoodDateFailed
+    case getDayMoodListFailed
 }

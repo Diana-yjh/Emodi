@@ -1,5 +1,5 @@
 //
-//  DateValues.swift
+//  DiaryModel.swift
 //  AnalysisData
 //
 //  Created by Yejin Hong on 1/7/26.
@@ -8,6 +8,7 @@
 
 import Foundation
 
-struct DateValue {
-    var day: String
+struct DiaryModel: Hashable {
+    var time: Date
+    var mood: Int
 }

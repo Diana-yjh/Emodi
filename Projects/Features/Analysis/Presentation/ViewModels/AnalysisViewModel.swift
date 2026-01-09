@@ -14,6 +14,7 @@ public class AnalysisViewModel: ObservableObject {
     @Published var days: [Date?] = []
     @Published var selectedDate: Date = Date()
     @Published var daysWithDiary: [String?] = []
+    @Published var diariesForSelectedDate: [DiaryModel] = []
     
     private let moodUseCase: MoodUseCaseProtocol
     
@@ -79,5 +80,19 @@ public class AnalysisViewModel: ObservableObject {
     
     func resetDaysWithDiary() {
         daysWithDiary = []
+    }
+    
+    func getSelectedDateDiary() async -> AnalysisResult<[DiaryModel], AnalysisError> {
+        do {
+            let result = try await moodUseCase.getDateMood(selectedDate: selectedDate)
+            
+            diariesForSelectedDate = result.compactMap { item in
+                DiaryModel(time: item.getTime(), mood: item.getMood())
+            }
+            
+            return .success([])
+        } catch {
+            return .failure(.getDayMoodListFailed)
+        }
     }
 }

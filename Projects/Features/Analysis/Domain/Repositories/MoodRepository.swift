@@ -10,4 +10,5 @@ import Foundation
 
 public protocol MoodRepository {
     func getMonthMood(startTime: Date, endTime: Date) async throws -> [MoodEntity]
+    func getDateMood(selectedDate: Date) async throws -> [MoodEntity]
 }

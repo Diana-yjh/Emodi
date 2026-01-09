@@ -14,6 +14,8 @@ struct EmodiCalendarView: View {
     @Binding var selectedDate: Date
     @Binding var daysWithDiary: [String?]
     
+    var onDateSelect: (Date) -> Void
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 22)
@@ -24,7 +26,7 @@ struct EmodiCalendarView: View {
                 WeekDayHeaderView()
                     .padding(.bottom)
                 DateView(dateValues: $dateValues, selectedDate: $selectedDate, daysWithDiary: $daysWithDiary, isDiaryAvailable: false) { date in
-                    self.selectedDate = date
+                    onDateSelect(date)
                 }
             }
             .padding()
@@ -89,7 +91,7 @@ struct DateView: View {
             VStack {
                 Text(date.toString(in: "dd"))
                     .font(date == selectedDate ? DSFont.bold(16) : DSFont.medium(16))
-                    .foregroundStyle(date == selectedDate ? DesignSystemAsset.primary.swiftUIColor : .gray)
+                    .foregroundStyle(dateStyle(date: date))
                 
                 Circle()
                     .frame(width: 5, height: 5)
@@ -98,12 +100,22 @@ struct DateView: View {
             
         }
         .overlay {
-            if date == selectedDate {
+            if date.toString(in: "yyyy.MM.dd") == selectedDate.toString(in: "yyyy.MM.dd") {
                 Circle()
                     .foregroundStyle(DesignSystemAsset.primary.swiftUIColor)
                     .frame(width: 45, height: 45)
                     .opacity(0.2)
             }
+        }
+    }
+    
+    func dateStyle(date: Date) -> Color {
+        if date == selectedDate {
+            return DesignSystemAsset.primary.swiftUIColor
+        } else if daysWithDiary.contains(date.toString(in: "dd")) {
+            return DesignSystemAsset.gray.swiftUIColor
+        } else {
+            return .gray
         }
     }
 }

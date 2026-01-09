@@ -19,4 +19,8 @@ public struct MoodEntity {
     public func getTime() -> Date {
         return time
     }
+    
+    public func getMood() -> Int {
+        return mood
+    }
 }

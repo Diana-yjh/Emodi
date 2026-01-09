@@ -10,6 +10,7 @@ import Foundation
 
 public protocol MoodUseCaseProtocol {
     func getMonthMood(startTime: Date, endTime: Date) async throws -> [MoodEntity]
+    func getDateMood(selectedDate: Date) async throws -> [MoodEntity]
 }
 
 public final class MoodUseCases: MoodUseCaseProtocol {
@@ -21,5 +22,9 @@ public final class MoodUseCases: MoodUseCaseProtocol {
     
     public func getMonthMood(startTime: Date, endTime: Date) async throws -> [MoodEntity] {
         try await repository.getMonthMood(startTime: startTime, endTime: endTime)
+    }
+    
+    public func getDateMood(selectedDate: Date) async throws -> [MoodEntity] {
+        try await repository.getDateMood(selectedDate: selectedDate)
     }
 }
