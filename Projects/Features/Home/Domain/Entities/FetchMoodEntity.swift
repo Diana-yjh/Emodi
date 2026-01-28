@@ -9,7 +9,6 @@
 import Foundation
 
 public struct FetchMoodEntity: Codable, Equatable, Sendable {
-    public let userID: String
     public let diaryID: String
     public let time: Date
     public let date: String
@@ -17,8 +16,7 @@ public struct FetchMoodEntity: Codable, Equatable, Sendable {
     public let memo: String
     public let photoURL: String?
     
-    public init(userID: String, diaryID: String, time: Date, date: String, mood: Int, memo: String, photoURL: String?) {
-        self.userID = userID
+    public init(diaryID: String, time: Date, date: String, mood: Int, memo: String, photoURL: String?) {
         self.diaryID = diaryID
         self.time = time
         self.date = date
@@ -28,7 +26,6 @@ public struct FetchMoodEntity: Codable, Equatable, Sendable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
         case diaryID = "diary_id"
         case time
         case date

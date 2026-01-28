@@ -29,7 +29,7 @@ public final class HomeFactoryImplement: HomeFactory {
         return HomeView(factory: self, isTabBarHidden: isTabBarHidden, viewModel: HomeViewModel(moodUseCase: moodUseCase))
     }
     
-    public func makeAddMoodViewModel(date: Date) -> AddMoodViewModel {
+    public func makeAddMoodViewModel(date: Date, moodData: Mood?) -> AddMoodViewModel {
         let moodRemoteDataSource = MoodRemoteDataSourceImplement(
             firestoreService: firestoreService
         )
@@ -40,7 +40,7 @@ public final class HomeFactoryImplement: HomeFactory {
         let photoRepository = PhotoRepositoryImplement()
         let photoUseCase = PhotoUseCase(repository: photoRepository)
         
-        return AddMoodViewModel(photoUseCase: photoUseCase, moodUseCase: moodUseCase)
+        return AddMoodViewModel(photoUseCase: photoUseCase, moodUseCase: moodUseCase, moodData: moodData)
     }
 }
 

@@ -12,10 +12,8 @@ import FirebaseCore
 import FirebaseFirestore
 
 public struct MoodEntityMapper {
-    public static func toEntity(from data: [String: Any]) -> FetchMoodEntity? {
-        guard let userID = data["user_id"] as? String,
-              let diaryID = data["diary_id"] as? String,
-              let date = data["date"] as? String,
+    public static func toEntity(from data: [String: Any], diaryId: String) -> FetchMoodEntity? {
+        guard let date = data["date"] as? String,
               let mood = data["mood"] as? Int,
               let memo = data["memo"] as? String
         else {
@@ -31,8 +29,7 @@ public struct MoodEntityMapper {
         }
         
         return FetchMoodEntity(
-            userID: userID,
-            diaryID: diaryID,
+            diaryID: diaryId,
             time: time,
             date: date,
             mood: mood,

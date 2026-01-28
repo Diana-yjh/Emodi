@@ -35,10 +35,17 @@ public struct FirestoreQueryResult: Sendable {
 
 // MARK: - Firestore Service Protocol
 public protocol FirestoreServiceProtocol: Sendable {
-    func addDocument(collection: String, data: [String: Any]) async throws
+    func addDocument(
+    collection: String,
+    documentId: String,
+    subcollection: String,
+    diaryId: String,
+    data: [String: Any]) async throws
     
     func getDocuments(
         collection: String,
+        documentId: String,
+        subcollection: String,
         filters: [FirestoreFilter],
         orderBy: String?,
         descending: Bool
@@ -46,6 +53,8 @@ public protocol FirestoreServiceProtocol: Sendable {
     
     func deleteDocuments(
         collection: String,
-        filters: [(field: String, value: Any)]
+        documentId: String,
+        subcollection: String,
+        diaryId: String
     ) async throws
 }

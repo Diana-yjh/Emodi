@@ -12,6 +12,7 @@ struct MotionHistoryView: View {
     @Binding var historyList: [Mood]
     
     var onAddButtonTap: () -> Void
+    var onMoodCellTap: (Mood) -> Void
     
     var body: some View {
         VStack {
@@ -45,7 +46,10 @@ struct MotionHistoryView: View {
                     DefaultCellView()
                 } else {
                     ForEach(historyList, id: \.self) { list in
-                        MoodCellView(mood: list.mood, memo: list.memo, time: list.time)
+                        MoodCellView(moodData: Mood(diaryID: list.diaryID, memo: list.memo, mood: list.mood, time: list.time, date: list.date))
+                            .onTapGesture {
+                                onMoodCellTap(Mood(diaryID: list.diaryID, memo: list.memo, mood: list.mood, time: list.time, date: list.date))
+                            }
                     }
                 }
             }
@@ -55,9 +59,7 @@ struct MotionHistoryView: View {
 }
 
 struct MoodCellView: View {
-    var mood: Int
-    var memo: String
-    var time: Date
+    var moodData: Mood
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -65,12 +67,12 @@ struct MoodCellView: View {
                 .frame(width: 30)
                 .padding(.horizontal)
             
-            Image(uiImage: MoodType.image(for: mood))
+            Image(uiImage: MoodType.image(for: moodData.mood))
                 .frame(width: 50, height: 24)
             
             VStack(alignment: .leading) {
                 HStack {
-                    Text(MoodType.title(for: mood))
+                    Text(MoodType.title(for: moodData.mood))
                         .font(DSFont.bold(18))
                         .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
                         .padding(.bottom, 5)
@@ -78,13 +80,13 @@ struct MoodCellView: View {
                     
                     Spacer()
                     
-                    Text(time.toTime())
+                    Text(moodData.time.toTime())
                         .font(DSFont.medium(14))
                         .foregroundStyle(DesignSystemAsset.disableButton.swiftUIColor)
                         .padding(.horizontal)
                 }
                 
-                Text(memo)
+                Text(moodData.memo)
                     .font(DSFont.medium(16))
                     .foregroundStyle(.gray)
                     .lineLimit(3)

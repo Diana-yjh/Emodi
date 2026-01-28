@@ -11,29 +11,38 @@ import Core
 
 public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
     private let firestoreService: FirestoreServiceProtocol
-    private let diaryID: String = UUID().uuidString
+    private var diaryID: String? = nil
     
     public init(firestoreService: FirestoreServiceProtocol) {
         self.firestoreService = firestoreService
     }
     
-    public func createMood(_ mood: MoodEntity) async throws {
-        try await firestoreService.addDocument(collection: "mood", data: [
-            "user_id": UserManager.shared.userID,
-            "diary_id": diaryID,
-            "time": mood.time,
-            "date": mood.date,
-            "mood": mood.mood,
-            "memo": mood.memo,
-            "photo_url": mood.photoURL ?? ""
-        ])
+    public func updateMood(_ mood: MoodEntity) async throws {
+        if let id = mood.diaryId {
+            diaryID = id
+        }
+        
+        try await firestoreService.addDocument(
+            collection: FirebaseCollection.collection.key,
+            documentId: UserManager.shared.userID,
+            subcollection: FirebaseCollection.subcollection.key,
+            diaryId: diaryID ?? UUID().uuidString,
+            data: [
+                "time": mood.time,
+                "date": mood.date,
+                "mood": mood.mood,
+                "memo": mood.memo,
+                "photo_url": mood.photoURL ?? ""
+            ]
+        )
     }
     
     public func fetchMoodList(date: String) async throws -> [FetchMoodEntity] {
         let result = try await firestoreService.getDocuments(
-            collection: "mood",
+            collection: FirebaseCollection.collection.key,
+            documentId: UserManager.shared.userID,
+            subcollection: FirebaseCollection.subcollection.key,
             filters: [
-                FirestoreFilter(field: "user_id", op: .equal, value: UserManager.shared.userID),
                 FirestoreFilter(field: "date", op: .equal, value: date)
             ],
             orderBy: "time",
@@ -42,18 +51,17 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
         
         return result.documents.compactMap { doc -> FetchMoodEntity? in
             guard let data = doc.data() else { return nil }
-            return MoodEntityMapper.toEntity(from: data)
+            let diaryId = doc.documentID
+            return MoodEntityMapper.toEntity(from: data, diaryId: diaryId)
         }
     }
     
-    public func deleteMood(userID: String, diaryID: String, date: String) async throws {
+    public func deleteMood(diaryID: String) async throws {
         try await firestoreService.deleteDocuments(
-            collection: "mood",
-            filters: [
-                (field: "user_id", value: userID),
-                (field: "diary_id", value: diaryID),
-                (field: "date", value: date)
-            ]
+            collection: FirebaseCollection.collection.key,
+            documentId: UserManager.shared.userID,
+            subcollection: FirebaseCollection.subcollection.key,
+            diaryId: diaryID
         )
     }
 }

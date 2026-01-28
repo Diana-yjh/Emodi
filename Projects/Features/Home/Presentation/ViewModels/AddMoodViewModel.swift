@@ -26,6 +26,8 @@ public class AddMoodViewModel: ObservableObject {
         }
     }
     
+    var moodData: Mood?
+    
     private func setImage(from selections: [PhotosPickerItem]?) {
         guard let selections else { return }
         
@@ -45,9 +47,10 @@ public class AddMoodViewModel: ObservableObject {
     private let photoUseCase: PhotoUseCaseProtocol
     private let moodUseCase: MoodUseCaseProtocol
     
-    public init(photoUseCase: PhotoUseCaseProtocol, moodUseCase: MoodUseCaseProtocol) {
+    public init(photoUseCase: PhotoUseCaseProtocol, moodUseCase: MoodUseCaseProtocol, moodData: Mood? = nil) {
         self.photoUseCase = photoUseCase
         self.moodUseCase = moodUseCase
+        self.moodData = moodData
     }
     
     var canSave: Bool {
@@ -76,10 +79,12 @@ extension AddMoodViewModel {
         photoUseCase.openSettings()
     }
     
+    @discardableResult
     func saveMoodData() async -> HomeResult<Void, HomeError> {
         let mood = MoodEntity(
-            time: Date(),
-            date: "\(Date().toYear()).\(Date().toMonthDate())",
+            diaryId: moodData?.diaryID,
+            time: moodData?.time ?? Date(),
+            date: moodData?.date ?? "\(Date().toYear()).\(Date().toMonthDate())",
             mood: selectedMood.index,
             memo: diaryText,
             photoURL: ""
@@ -94,12 +99,20 @@ extension AddMoodViewModel {
         }
     }
     
-//    func deleteMoodData() async -> EmodiResult<Void, EmodiError> {
-//        do {
-//            try await moodUseCase.deleteMoodDiary(date: "\(selectedDate.toYear()).\(selectedDate.toMonthDate())", userID: 1, diaryID: 1)
-//            return .success(())
-//        } catch {
-//            return .failure(.deleteMoodDiaryFailed)
-//        }
-//    }
+    func fetchMoodData() {
+        if let moodData = moodData {
+            self.selectedMood = MoodType(index: moodData.mood)
+            self.diaryText = moodData.memo
+        }
+    }
+    
+    @discardableResult
+    func deleteMoodData(diaryId: String) async -> HomeResult<Void, HomeError> {
+        do {
+            try await moodUseCase.deleteMoodDiary(diaryId: diaryId)
+            return .success(())
+        } catch {
+            return .failure(.deleteMoodDiaryFailed)
+        }
+    }
 }

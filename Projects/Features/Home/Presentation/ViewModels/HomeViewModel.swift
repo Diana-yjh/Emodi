@@ -32,16 +32,18 @@ public class HomeViewModel: ObservableObject {
         
         result.forEach { item in
             if let item = item {
-                let newMood = Mood(memo: item.memo, mood: item.mood, time: item.time)
+                let newMood = Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date)
                 
                 if !moodList.contains(newMood) {
-                    moodList.insert(Mood(memo: item.memo, mood: item.mood, time: item.time), at: 0)
+                    moodList.insert(Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date), at: 0)
                 }
             }
         }
     }
     
     func clearMoodList() {
-        moodList.removeAll()
+        withAnimation(.easeInOut(duration: 0.3)) {
+            moodList.removeAll()
+        }
     }
 }

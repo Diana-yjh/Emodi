@@ -15,6 +15,7 @@ struct AddMoodView: View {
     @State private var showSavePopup = false
     @State private var showSaveWarningPopup = false
     @State private var showSaveFailedPopup = false
+    @State private var showMoodDeleteAlert: Bool = false
     @State private var saveTrigger = false
     
     @Environment(\.dismiss) private var dismiss
@@ -23,10 +24,20 @@ struct AddMoodView: View {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
     
+    var isEditMode: Bool {
+        viewModel.moodData != nil
+    }
+    
     var body: some View {
         VStack {
-            SubNavigationBar(theme: .dark, onBackButtonTab: {
-                dismiss()
+            SubNavigationBar(
+                theme: .dark,
+                mode: isEditMode ? .edit : .add ,
+                onBackButtonTab: {
+                    dismiss()
+                },
+                onDeleteButtonTab: {
+                showMoodDeleteAlert = true
             })
             
             ScrollView {
@@ -52,7 +63,7 @@ struct AddMoodView: View {
                 }
             }
             
-            EmodiButton(title: "저장하기") {
+            EmodiButton(title: isEditMode ? "수정하기" : "저장하기") {
                 if viewModel.canSave {
                     showSavePopup = true
                 } else {
@@ -67,6 +78,9 @@ struct AddMoodView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+        }
+        .onAppear {
+            viewModel.fetchMoodData()
         }
         .overlay {
             if showAddDiaryPopup {
@@ -151,6 +165,35 @@ struct AddMoodView: View {
                     WarningAlert(title: "사진을 추가하기 위해서 권한을 허용해주세요", onClickOK: {
                         self.viewModel.openPhotoSettings()
                         self.viewModel.showPhotoPermissionAlert = false
+                    })
+                    .padding()
+                }
+            }
+            
+            if showMoodDeleteAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.linear(duration: 0.1)) {
+                                showSaveWarningPopup = false
+                            }
+                        }
+                    
+                    ConfirmAlert(title: "기록을 삭제하시겠습니까?", onClickOK: {
+                        Task {
+                            let result = await viewModel.deleteMoodData(diaryId: viewModel.moodData?.diaryID ?? "")
+                            
+                            switch result {
+                            case .success():
+                                showMoodDeleteAlert = false
+                                dismiss()
+                            case .failure(let error):
+                                showSaveFailedPopup = true
+                            }
+                        }
+                    }, onClickCancel: {
+                        showMoodDeleteAlert = false
                     })
                     .padding()
                 }

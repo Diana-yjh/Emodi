@@ -21,6 +21,12 @@ public enum Theme {
     }
 }
 
+public enum ViewMode {
+    case show
+    case add
+    case edit
+}
+
 public struct MainNavigationBar: View {
     var onMenuTab: () -> Void
     var onAccountTab: () -> Void
@@ -40,6 +46,7 @@ public struct MainNavigationBar: View {
                 Image(uiImage: theme.image)
                     .resizable()
                     .frame(width: 20, height: 15)
+                    .hidden()
             }
             
             Spacer()
@@ -50,6 +57,7 @@ public struct MainNavigationBar: View {
                 Image(uiImage: DesignSystemAsset.userIcon.image)
                     .resizable()
                     .frame(width: 30, height: 30)
+                    .hidden()
             }
         }
         .padding()
@@ -57,12 +65,17 @@ public struct MainNavigationBar: View {
 }
 
 public struct SubNavigationBar: View {
-    var onBackButtonTab: () -> Void
     var theme: Theme
+    var mode: ViewMode
     
-    public init(theme: Theme, onBackButtonTab: @escaping () -> Void) {
+    var onBackButtonTab: () -> Void
+    var onDeleteButtonTab: () -> Void
+    
+    public init(theme: Theme, mode: ViewMode, onBackButtonTab: @escaping () -> Void, onDeleteButtonTab: @escaping () -> Void) {
         self.theme = theme
+        self.mode = mode
         self.onBackButtonTab = onBackButtonTab
+        self.onDeleteButtonTab = onDeleteButtonTab
     }
     
     public var body: some View {
@@ -77,11 +90,22 @@ public struct SubNavigationBar: View {
             }
             
             Spacer()
+            
+            if mode == .edit {
+                Button {
+                    onDeleteButtonTab()
+                } label: {
+                    Image(uiImage: DesignSystemAsset.deleteIcon.image)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+            }
         }
         .padding()
     }
 }
 
 #Preview {
-    SubNavigationBar(theme: .light, onBackButtonTab: {})
+    MainNavigationBar(theme: .dark, onMenuTab: {}, onAccountTab: {})
+    SubNavigationBar(theme: .dark, mode: .add, onBackButtonTab: {}, onDeleteButtonTab: {})
 }

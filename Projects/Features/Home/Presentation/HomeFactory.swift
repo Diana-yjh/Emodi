@@ -9,5 +9,5 @@ import SwiftUI
 
 public protocol HomeFactory {
     func makeHomeView(isTabBarHidden: Binding<Bool>) -> HomeView
-    func makeAddMoodViewModel(date: Date) -> AddMoodViewModel
+    func makeAddMoodViewModel(date: Date, moodData: Mood?) -> AddMoodViewModel
 }

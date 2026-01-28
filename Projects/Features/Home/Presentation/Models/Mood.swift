@@ -8,8 +8,10 @@
 
 import Foundation
 
-struct Mood: Hashable {
+public struct Mood: Hashable {
+    let diaryID: String
     let memo: String
     let mood: Int
     let time: Date
+    let date: String
 }
