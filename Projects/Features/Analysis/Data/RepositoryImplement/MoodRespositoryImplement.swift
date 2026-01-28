@@ -21,7 +21,9 @@ public final class MoodRepositoryImplement: MoodRepository {
     
     public func getMonthMood(startTime: Date, endTime: Date) async throws -> [MoodEntity] {
         let result = try await firestoreService.getDocuments(
-            collection: "mood",
+            collection: FirebaseCollection.collection.key,
+            documentId: UserManager.shared.userID,
+            subcollection: FirebaseCollection.subcollection.key,
             filters: [
                 FirestoreFilter(field: "time", op: .greaterThanOrEqual, value: startTime),
                 FirestoreFilter(field: "time", op: .lessThan, value: endTime)
@@ -42,7 +44,9 @@ public final class MoodRepositoryImplement: MoodRepository {
         let endOfDay = calendar.date(byAdding: DateComponents(day: 1, second: -1), to: startOfDay)!
         
         let result = try await firestoreService.getDocuments(
-            collection: "mood",
+            collection: FirebaseCollection.collection.key,
+            documentId: UserManager.shared.userID,
+            subcollection: FirebaseCollection.subcollection.key,
             filters: [
                 FirestoreFilter(field: "time", op: .greaterThanOrEqual, value: startOfDay),
                 FirestoreFilter(field: "time", op: .lessThan, value: endOfDay)

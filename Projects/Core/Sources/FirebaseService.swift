@@ -27,27 +27,54 @@ public enum QueryOperator {
     case lessThan
 }
 
+public enum FirebaseCollection: String {
+    case database
+    case collection
+    case subcollection
+    
+    public var key: String {
+        switch self {
+        case .database:
+            ""
+        case .collection:
+            ""
+        case .subcollection:
+            ""
+        }
+    }
+}
+
 public final class FirestoreService: FirestoreServiceProtocol, @unchecked Sendable {
     private var db: Firestore
     
-    public init(firestore: Firestore = Firestore.firestore(database: "emodi")) {
+    public init(firestore: Firestore = Firestore.firestore(database: FirebaseCollection.database.key)) {
         self.db = firestore
     }
     
     public func addDocument(
         collection: String,
+        documentId: String,
+        subcollection: String,
+        diaryId: String,
         data: [String: Any]
     ) async throws {
-        try await db.collection(collection).addDocument(data: data)
+        try await db
+            .collection(collection)
+            .document(documentId)
+            .collection(subcollection)
+            .document(diaryId)
+            .setData(data)
     }
     
     public func getDocuments(
         collection: String,
+        documentId: String,
+        subcollection: String,
         filters: [FirestoreFilter],
         orderBy: String?,
         descending: Bool
     ) async throws -> FirestoreQueryResult {
-        var query: Query = db.collection(collection)
+        var query: Query = db.collection(collection).document(documentId).collection(subcollection)
         
         for filter in filters {
             switch filter.op {
@@ -72,7 +99,11 @@ public final class FirestoreService: FirestoreServiceProtocol, @unchecked Sendab
         return FirestoreQueryResult(documents: documents)
     }
     
-    public func deleteDocuments(collection: String, filters: [(field: String, value: Any)]) async throws {
-        
+    public func deleteDocuments(collection: String, documentId: String, subcollection: String, diaryId: String) async throws {
+        try await db.collection(collection)
+            .document(documentId)
+            .collection(subcollection)
+            .document(diaryId)
+            .delete()
     }
 }

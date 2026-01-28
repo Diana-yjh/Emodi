@@ -8,6 +8,6 @@
 typealias HomeDestinations = Array<Homes>
 
 enum Homes: Hashable {
-    case addMood
+    case addMood(moodData: Mood?)
 }
 

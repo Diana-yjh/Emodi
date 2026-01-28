@@ -10,7 +10,7 @@ import Foundation
 public protocol MoodUseCaseProtocol {
     func addMoodDiary(mood: MoodEntity) async throws
     func fetchMoodDiary(date: String) async throws -> [FetchMoodEntity?]
-    func deleteMoodDiary(date: String) async throws
+    func deleteMoodDiary(diaryId: String) async throws
 }
 
 public final class MoodUseCase: MoodUseCaseProtocol {
@@ -28,7 +28,7 @@ public final class MoodUseCase: MoodUseCaseProtocol {
         try await repository.fetchMoodDiary(date: date)
     }
     
-    public func deleteMoodDiary(date: String) async throws {
-        try await repository.deleteMoodDiary(date: date)
+    public func deleteMoodDiary(diaryId: String) async throws {
+        try await repository.deleteMoodDiary(diaryId: diaryId)
     }
 }

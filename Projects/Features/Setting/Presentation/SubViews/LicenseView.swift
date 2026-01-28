@@ -16,9 +16,9 @@ public struct LicenseView: View {
     
     public var body: some View {
         VStack(alignment: .center) {
-            SubNavigationBar(theme: .dark, onBackButtonTab: {
+            SubNavigationBar(theme: .dark, mode: .show, onBackButtonTab: {
                 dismiss()
-            })
+            }, onDeleteButtonTab: {})
             
             ScrollView {
                 Text("1. License")
