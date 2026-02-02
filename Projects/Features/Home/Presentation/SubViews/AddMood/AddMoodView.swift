@@ -9,6 +9,20 @@ import SwiftUI
 import DesignSystem
 import PhotosUI
 
+enum AddMoodViewText {
+    case saveButton
+    case editButton
+    
+    var title: String {
+        switch self {
+        case .saveButton:
+            "저장하기"
+        case .editButton:
+            "수정하기"
+        }
+    }
+}
+
 struct AddMoodView: View {
     @StateObject private var viewModel: AddMoodViewModel
     @State private var showAddDiaryPopup = false
@@ -20,8 +34,8 @@ struct AddMoodView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    init(viewModel: AddMoodViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init(factory: HomeFactory, date: Date, moodData: Mood?) {
+        _viewModel = StateObject(wrappedValue: factory.makeAddMoodViewModel(date: date, moodData: moodData))
     }
     
     var isEditMode: Bool {
@@ -30,192 +44,50 @@ struct AddMoodView: View {
     
     var body: some View {
         VStack {
-            SubNavigationBar(
-                theme: .dark,
-                mode: isEditMode ? .edit : .add ,
-                onBackButtonTab: {
-                    dismiss()
-                },
-                onDeleteButtonTab: {
-                showMoodDeleteAlert = true
-            })
-            
-            ScrollView {
-                VStack {
-                    Text("오늘 기분은 어떠세요?")
-                        .font(DSFont.bold(26))
-                    
-                    MoodSectionView(selected: viewModel.selectedMood) { mood in
-                        viewModel.selectMood(mood)
-                    }
-                    .padding()
-                    
-                    diarySectionView()
-                        .padding()
-                        .onTapGesture {
-                            showAddDiaryPopup = true
-                        }
-                    
-                    photoSectionView()
-                        .padding(.horizontal)
-                    
-                    Spacer()
-                }
-            }
-            
-            EmodiButton(title: isEditMode ? "수정하기" : "저장하기") {
-                if viewModel.canSave {
-                    showSavePopup = true
-                } else {
-                    showSaveWarningPopup = true
-                }
-            }
-            .padding()
+            navigationBar
+            scrollContent
+            saveButton
         }
         .navigationBarHidden(true)
-        .background {
-            Image(uiImage: DesignSystemAsset.grayBackground.image)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-        }
-        .onAppear {
-            viewModel.fetchMoodData()
-        }
-        .overlay {
-            if showAddDiaryPopup {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            showAddDiaryPopup = false
-                        }
-                    
-                    DiaryView(showAddDiaryPopup: $showAddDiaryPopup) { content in
-                        viewModel.diaryText = content
-                    }
-                    .padding()
-                }
-            }
-            
-            if showSavePopup {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.linear(duration: 0.1)) {
-                                showSavePopup = false
-                            }
-                        }
-                    
-                    ConfirmAlert(title: "작성한 내용을 저장 하시겠습니까?") {
-                        saveTrigger = true
-                    } onClickCancel: {
-                        showSavePopup = false
-                    }
-                    .padding()
-                }
-            }
-            
-            if showSaveWarningPopup {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.linear(duration: 0.1)) {
-                                showSaveWarningPopup = false
-                            }
-                        }
-                    
-                    WarningAlert(title: "비어있는 기록을 완성해 주세요", onClickOK: {
-                        showSaveWarningPopup = false
-                    })
-                    .padding()
-                }
-            }
-            
-            if showSaveFailedPopup {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.linear(duration: 0.1)) {
-                                showSaveWarningPopup = false
-                            }
-                        }
-                    
-                    WarningAlert(title: "기록 저장에 실패하였습니다", onClickOK: {
-                        showSaveFailedPopup = false
-                        dismiss()
-                    })
-                    .padding()
-                }
-            }
-            
-            if viewModel.showPhotoPermissionAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.linear(duration: 0.1)) {
-                                self.viewModel.showPhotoPermissionAlert = false
-                            }
-                        }
-                    
-                    WarningAlert(title: "사진을 추가하기 위해서 권한을 허용해주세요", onClickOK: {
-                        self.viewModel.openPhotoSettings()
-                        self.viewModel.showPhotoPermissionAlert = false
-                    })
-                    .padding()
-                }
-            }
-            
-            if showMoodDeleteAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.linear(duration: 0.1)) {
-                                showSaveWarningPopup = false
-                            }
-                        }
-                    
-                    ConfirmAlert(title: "기록을 삭제하시겠습니까?", onClickOK: {
-                        Task {
-                            let result = await viewModel.deleteMoodData(diaryId: viewModel.moodData?.diaryID ?? "")
-                            
-                            switch result {
-                            case .success():
-                                showMoodDeleteAlert = false
-                                dismiss()
-                            case .failure(let error):
-                                showSaveFailedPopup = true
-                            }
-                        }
-                    }, onClickCancel: {
-                        showMoodDeleteAlert = false
-                    })
-                    .padding()
-                }
-            }
-        }
-        .task(id: saveTrigger) {
-            guard saveTrigger else { return }
-            
-            let result = await viewModel.saveMoodData()
-            
-            switch result {
-            case .success(_):
-                showSavePopup = false
-                dismiss()
-            case .failure(_):
-                showSavePopup = false
-                showSaveFailedPopup = true
+        .background { backgroundImage }
+        .onAppear { viewModel.fetchMoodData() }
+        .overlay { alertOverlays }
+        .overlay { savingOverlay }
+        .task(id: saveTrigger, saveTask)
+    }
+    
+    private var navigationBar: some View {
+        SubNavigationBar(
+            theme: .dark,
+            mode: isEditMode ? .edit : .add,
+            onBackButtonTab: { dismiss() },
+            onDeleteButtonTab: { showMoodDeleteAlert = true }
+        )
+    }
+    
+    private var scrollContent: some View {
+        ScrollView(showsIndicators: false) {
+            VStack {
+                Text("오늘 기분은 어떠세요?")
+                    .font(DSFont.bold(26))
+                
+                moodSection
+                diarySection
+                photoSection
+                
+                Spacer()
             }
         }
     }
     
-    private func diarySectionView() -> some View {
+    private var moodSection: some View {
+        MoodSectionView(selected: viewModel.selectedMood) { mood in
+            viewModel.selectMood(mood)
+        }
+        .padding()
+    }
+    
+    private var diarySection: some View {
         VStack {
             HStack {
                 Image(systemName: SectionType.diary.icon)
@@ -243,9 +115,11 @@ struct AddMoodView: View {
                     .shadow(radius: 2)
             }
         }
+        .padding()
+        .onTapGesture { showAddDiaryPopup = true }
     }
     
-    private func photoSectionView() -> some View {
+    private var photoSection: some View {
         VStack {
             HStack {
                 Image(systemName: SectionType.photo.icon)
@@ -262,19 +136,22 @@ struct AddMoodView: View {
             VStack {
                 Spacer()
                 
-                if !viewModel.selectedImages.isEmpty {
+                if viewModel.isLoadingImages {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                } else if !viewModel.selectedImages.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(viewModel.selectedImages, id: \.self) { images in
+                            ForEach(viewModel.selectedImages, id: \.self) { image in
                                 ImageCell(onDeleteTap: {
-                                    viewModel.selectedImages.remove(images)
-                                }, uiImage: images)
+                                    viewModel.selectedImages.remove(image)
+                                }, uiImage: image)
                             }
                         }
                     }
                 }
                 
-                if viewModel.selectedImages.count < 5 {
+                if !viewModel.isLoadingImages && viewModel.selectedImages.count < 5 {
                     PhotosPicker(selection: $viewModel.imageSelections, maxSelectionCount: 5, matching: .images) {
                         Image(systemName: "plus")
                             .resizable()
@@ -292,6 +169,177 @@ struct AddMoodView: View {
                     .foregroundStyle(.white)
                     .shadow(radius: 2)
             }
+        }
+        .padding(.horizontal)
+    }
+    
+    private var saveButton: some View {
+        EmodiButton(title: isEditMode ? AddMoodViewText.editButton.title : AddMoodViewText.saveButton.title) {
+            if viewModel.canSave {
+                showSavePopup = true
+            } else {
+                showSaveWarningPopup = true
+            }
+        }
+        .padding()
+    }
+    
+    private var backgroundImage: some View {
+        Image(uiImage: DesignSystemAsset.grayBackground.image)
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
+    }
+    
+    private var savingOverlay: some View {
+        Group {
+            if viewModel.isSavingImages {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    
+                    ProgressView()
+                        .scaleEffect(2)
+                        .tint(.white)
+                }
+                .allowsHitTesting(true)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var alertOverlays: some View {
+        if showAddDiaryPopup {
+            diaryPopupOverlay
+        } else if showSavePopup {
+            savePopupOverlay
+        } else if showSaveWarningPopup {
+            saveWarningOverlay
+        } else if showSaveFailedPopup {
+            saveFailedOverlay
+        } else if viewModel.showPhotoPermissionAlert {
+            photoPermissionOverlay
+        } else if showMoodDeleteAlert {
+            deleteAlertOverlay
+        }
+    }
+    
+    private var diaryPopupOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture { showAddDiaryPopup = false }
+            
+            DiaryView(showAddDiaryPopup: $showAddDiaryPopup) { content in
+                viewModel.diaryText = content
+            }
+            .padding()
+        }
+    }
+    
+    private var savePopupOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.1)) { showSavePopup = false }
+                }
+            
+            ConfirmAlert(title: "작성한 내용을 저장 하시겠습니까?") {
+                saveTrigger = true
+            } onClickCancel: {
+                showSavePopup = false
+            }
+            .padding()
+        }
+    }
+    
+    private var saveWarningOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.1)) { showSaveWarningPopup = false }
+                }
+            
+            WarningAlert(title: "비어있는 기록을 완성해 주세요") {
+                showSaveWarningPopup = false
+            }
+            .padding()
+        }
+    }
+    
+    private var saveFailedOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.1)) { showSaveFailedPopup = false }
+                }
+            
+            WarningAlert(title: "기록 저장에 실패하였습니다") {
+                showSaveFailedPopup = false
+                dismiss()
+            }
+            .padding()
+        }
+    }
+    
+    private var photoPermissionOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.1)) { viewModel.showPhotoPermissionAlert = false }
+                }
+            
+            WarningAlert(title: "사진을 추가하기 위해서 권한을 허용해주세요") {
+                viewModel.openPhotoSettings()
+                viewModel.showPhotoPermissionAlert = false
+            }
+            .padding()
+        }
+    }
+    
+    private var deleteAlertOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.1)) { showMoodDeleteAlert = false }
+                }
+            
+            ConfirmAlert(title: "기록을 삭제하시겠습니까?", onClickOK: {
+                Task {
+                    let result = await viewModel.deleteMoodData(diaryId: viewModel.moodData?.diaryID ?? "")
+                    switch result {
+                    case .success():
+                        showMoodDeleteAlert = false
+                        dismiss()
+                    case .failure(_):
+                        showSaveFailedPopup = true
+                    }
+                }
+            }, onClickCancel: {
+                showMoodDeleteAlert = false
+            })
+            .padding()
+        }
+    }
+    
+    @Sendable
+    private func saveTask() async {
+        guard saveTrigger else { return }
+        
+        showSavePopup = false
+        
+        let result = await viewModel.saveMoodData()
+        
+        switch result {
+        case .success(_):
+            dismiss()
+        case .failure(_):
+            showSaveFailedPopup = true
         }
     }
 }

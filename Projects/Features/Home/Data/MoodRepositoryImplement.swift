@@ -28,4 +28,8 @@ public final class MoodRepositoryImplement: MoodRepository {
     public func deleteMoodDiary(diaryId: String) async throws {
         try await remoteDataSource.deleteMood(diaryID: diaryId)
     }
+    
+    public func uploadImage(imageData: [Data: String]) async throws -> [String] {
+        try await remoteDataSource.uploadImage(imageData)
+    }
 }

@@ -11,10 +11,13 @@ import Core
 
 public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
     private let firestoreService: FirestoreServiceProtocol
+    private let firebaseStorageService: FirebaseStorageProtocol
+    
     private var diaryID: String? = nil
     
-    public init(firestoreService: FirestoreServiceProtocol) {
+    public init(firestoreService: FirestoreServiceProtocol, firebaseStorageService: FirebaseStorageProtocol) {
         self.firestoreService = firestoreService
+        self.firebaseStorageService = firebaseStorageService
     }
     
     public func updateMood(_ mood: MoodEntity) async throws {
@@ -32,7 +35,7 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
                 "date": mood.date,
                 "mood": mood.mood,
                 "memo": mood.memo,
-                "photo_url": mood.photoURL ?? ""
+                "photo_url": mood.photoURL ?? []
             ]
         )
     }
@@ -63,5 +66,9 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
             subcollection: FirebaseCollection.subcollection.key,
             diaryId: diaryID
         )
+    }
+    
+    public func uploadImage(_ imageData: [Data: String]) async throws -> [String] {
+        try await firebaseStorageService.uploadImage(imageData).urls
     }
 }

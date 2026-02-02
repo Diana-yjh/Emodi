@@ -36,10 +36,11 @@ struct EmodiTabView: View {
                     selectedTab = tab
                 }
                 .frame(maxWidth: 320)
+                .offset(y: isTabBarHidden ? 120 : 0)
+                .animation(.easeInOut(duration: 0.3), value: isTabBarHidden)
             }
             .ignoresSafeArea()
-            .opacity(isTabBarHidden ? 0 : 1)
-            .allowsHitTesting(isTabBarHidden == false)
+            .allowsHitTesting(!isTabBarHidden)
         }
     }
 }

@@ -14,4 +14,5 @@ public struct Mood: Hashable {
     let mood: Int
     let time: Date
     let date: String
+    let photoURL: [String]?
 }

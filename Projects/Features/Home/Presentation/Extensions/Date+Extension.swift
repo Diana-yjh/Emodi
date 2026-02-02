@@ -44,4 +44,11 @@ extension Date {
         
         return String(format: "%02d:%02d", hour, minute)
     }
+    
+    func imageGeneratedTime() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmss"
+        let timestamp = formatter.string(from: self)
+        return timestamp
+    }
 }

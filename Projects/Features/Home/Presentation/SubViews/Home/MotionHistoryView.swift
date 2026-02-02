@@ -8,11 +8,30 @@
 import SwiftUI
 import DesignSystem
 
+enum MotionHistoryViewText {
+    case suggestion
+    case noData
+    case defaultCellTitle
+    
+    var text: String {
+        switch self {
+        case .suggestion:
+            "지금의 기분을 기록해보세요!"
+        case .noData:
+            "기록 없음"
+        case .defaultCellTitle:
+            "오늘의 기분은 어떤가요?"
+        }
+    }
+}
 struct MotionHistoryView: View {
     @Binding var historyList: [Mood]
+    @Binding var isTabBarHidden: Bool
     
     var onAddButtonTap: () -> Void
     var onMoodCellTap: (Mood) -> Void
+    
+    @State private var lastScrollOffset: CGFloat = 0
     
     var body: some View {
         VStack {
@@ -31,7 +50,7 @@ struct MotionHistoryView: View {
                         .frame(width: 260, height: 100)
                         .padding([.top, .trailing], 10)
                     
-                    Text("지금의 기분을 기록해보세요!")
+                    Text(MotionHistoryViewText.suggestion.text)
                         .font(DSFont.bold(14))
                         .foregroundStyle(.white)
                         .padding(.trailing, 24)
@@ -41,23 +60,55 @@ struct MotionHistoryView: View {
                 Spacer()
             }
             
-            ScrollView {
-                if historyList.isEmpty {
-                    DefaultCellView()
-                } else {
-                    ForEach(historyList, id: \.self) { list in
-                        MoodCellView(moodData: Mood(diaryID: list.diaryID, memo: list.memo, mood: list.mood, time: list.time, date: list.date))
-                            .onTapGesture {
-                                onMoodCellTap(Mood(diaryID: list.diaryID, memo: list.memo, mood: list.mood, time: list.time, date: list.date))
+            ScrollView(showsIndicators: false) {
+                VStack {
+                    if historyList.isEmpty {
+                        DefaultCellView()
+                    } else {
+                        ForEach(historyList, id: \.self) { list in
+                            MoodCellView(moodData: list)
+                                .onTapGesture {
+                                    onMoodCellTap(list)
+                                }
+                        }
+                    }
+                }
+                .padding(.bottom, 100)
+                .overlay {
+                    GeometryReader { geo in
+                        let offset = geo.frame(in: .named("moodScroll")).minY
+                        Color.clear
+                            .onChange(of: offset) { newValue in
+                                handleScroll(newValue)
                             }
                     }
                 }
             }
+            .coordinateSpace(name: "moodScroll")
             .padding(.top, -40)
         }
     }
+    
+    private func handleScroll(_ offset: CGFloat) {
+        let delta = offset - lastScrollOffset
+        
+        if delta < -10 {
+            if !isTabBarHidden {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isTabBarHidden = true
+                }
+            }
+        } else if delta > 10 {
+            if isTabBarHidden {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isTabBarHidden = false
+                }
+            }
+        }
+        
+        lastScrollOffset = offset
+    }
 }
-
 struct MoodCellView: View {
     var moodData: Mood
     
@@ -113,13 +164,13 @@ struct DefaultCellView: View {
                 .frame(width: 50, height: 24)
             
             VStack(alignment: .leading) {
-                Text("기록 없음")
+                Text(MotionHistoryViewText.noData.text)
                     .font(DSFont.bold(18))
                     .foregroundStyle(DesignSystemAsset.menuButton.swiftUIColor)
                     .padding(.bottom, 5)
                     .padding(.horizontal)
                 
-                Text("오늘의 기분은 어떤가요?")
+                Text(MotionHistoryViewText.defaultCellTitle.text)
                     .font(DSFont.medium(16))
                     .foregroundStyle(.gray)
                     .padding(.horizontal)
@@ -129,8 +180,4 @@ struct DefaultCellView: View {
         }
         .frame(height: 100)
     }
-}
-
-#Preview {
-    //    MotionHistoryView(onAddButtonTap: {})
 }

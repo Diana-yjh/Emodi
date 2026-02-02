@@ -13,25 +13,29 @@ import SwiftUI
 
 public final class HomeFactoryImplement: HomeFactory {
     private let firestoreService: FirestoreServiceProtocol
+    private let firebaseStorageService: FirebaseStorageProtocol
     
-    public init(firestoreService: FirestoreServiceProtocol? = nil) {
+    public init(firestoreService: FirestoreServiceProtocol? = nil, firebaseStorageService: FirebaseStorageProtocol? = nil) {
         self.firestoreService = firestoreService ?? FirestoreService()
+        self.firebaseStorageService = firebaseStorageService ?? FirebaseStorageService()
     }
     
     public func makeHomeView(isTabBarHidden: Binding<Bool>) -> HomeView {
         let moodRemoteDataSource = MoodRemoteDataSourceImplement(
-            firestoreService: firestoreService
+            firestoreService: firestoreService,
+            firebaseStorageService: firebaseStorageService
         )
         
         let moodRepository = MoodRepositoryImplement(remoteDataSource: moodRemoteDataSource)
         let moodUseCase = MoodUseCase(repository: moodRepository)
         
-        return HomeView(factory: self, isTabBarHidden: isTabBarHidden, viewModel: HomeViewModel(moodUseCase: moodUseCase))
+        return HomeView(factory: self, isTabBarHidden: isTabBarHidden, moodUseCase: moodUseCase)
     }
     
     public func makeAddMoodViewModel(date: Date, moodData: Mood?) -> AddMoodViewModel {
         let moodRemoteDataSource = MoodRemoteDataSourceImplement(
-            firestoreService: firestoreService
+            firestoreService: firestoreService,
+            firebaseStorageService: firebaseStorageService
         )
         
         let moodRepository = MoodRepositoryImplement(remoteDataSource: moodRemoteDataSource)

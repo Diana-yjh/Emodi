@@ -14,9 +14,9 @@ public struct FetchMoodEntity: Codable, Equatable, Sendable {
     public let date: String
     public let mood: Int
     public let memo: String
-    public let photoURL: String?
+    public let photoURL: [String]?
     
-    public init(diaryID: String, time: Date, date: String, mood: Int, memo: String, photoURL: String?) {
+    public init(diaryID: String, time: Date, date: String, mood: Int, memo: String, photoURL: [String]?) {
         self.diaryID = diaryID
         self.time = time
         self.date = date

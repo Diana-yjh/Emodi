@@ -32,10 +32,10 @@ public class HomeViewModel: ObservableObject {
         
         result.forEach { item in
             if let item = item {
-                let newMood = Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date)
+                let newMood = Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date, photoURL: item.photoURL)
                 
                 if !moodList.contains(newMood) {
-                    moodList.insert(Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date), at: 0)
+                    moodList.insert(Mood(diaryID: item.diaryID, memo: item.memo, mood: item.mood, time: item.time, date: item.date, photoURL: item.photoURL), at: 0)
                 }
             }
         }

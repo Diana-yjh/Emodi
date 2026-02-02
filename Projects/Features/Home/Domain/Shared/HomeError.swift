@@ -16,4 +16,9 @@ public enum HomeError: Error {
     case addMoodDiaryFailed
     case fetchMoodDiaryFailed
     case deleteMoodDiaryFailed
+    
+    case imageCompressFailed
+    case uploadImageFailed
+    case imageDownloadFailed
+    case imageDecodeFailed
 }

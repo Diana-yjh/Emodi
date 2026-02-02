@@ -34,7 +34,7 @@ public struct MoodEntityMapper {
             date: date,
             mood: mood,
             memo: memo,
-            photoURL: data["photo_url"] as? String
+            photoURL: data["photo_url"] as? [String]
         )
     }
 }

@@ -11,4 +11,6 @@ public protocol MoodRepository {
     func addMoodDiary(mood: MoodEntity) async throws
     func fetchMoodDiary(date: String) async throws -> [FetchMoodEntity?]
     func deleteMoodDiary(diaryId: String) async throws
+    
+    func uploadImage(imageData: [Data: String]) async throws -> [String]
 }

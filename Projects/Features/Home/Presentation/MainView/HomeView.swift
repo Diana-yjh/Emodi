@@ -7,6 +7,24 @@
 
 import SwiftUI
 import DesignSystem
+import HomeDomain
+
+enum HomeViewText {
+    case title
+    case subtitle
+    case pastMoodError
+    
+    var text: String {
+        switch self {
+        case .title:
+            "오늘의 기분"
+        case .subtitle:
+            "오늘은 어떤 하루인가요?"
+        case .pastMoodError:
+            "과거의 기분은 추가할 수 없어요"
+        }
+    }
+}
 
 public struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
@@ -17,10 +35,10 @@ public struct HomeView: View {
     
     let factory: HomeFactory
     
-    public init(factory: HomeFactory, isTabBarHidden: Binding<Bool>, viewModel: HomeViewModel) {
+    public init(factory: HomeFactory, isTabBarHidden: Binding<Bool>, moodUseCase: MoodUseCaseProtocol) {
         self.factory = factory
-        _viewModel = StateObject(wrappedValue: viewModel)
         _isTabBarHidden = isTabBarHidden
+        _viewModel = StateObject(wrappedValue: HomeViewModel(moodUseCase: moodUseCase))
     }
     
     public var body: some View {
@@ -34,7 +52,7 @@ public struct HomeView: View {
         .onChange(of: navigationPath, perform: onNavigationPathChange)
         .navigationBarHidden(true)
     }
-
+    
     private var mainContent: some View {
         ZStack {
             VStack(alignment: .leading) {
@@ -56,6 +74,7 @@ public struct HomeView: View {
         ContentSectionView(
             viewModel: viewModel,
             date: $date,
+            isTabBarHidden: $isTabBarHidden,
             onAddButtonTap: handleAddButtonTap,
             onMoodCellTap: handleMoodCellTap
         )
@@ -69,7 +88,7 @@ public struct HomeView: View {
             viewModel.showAddMoodAlert = true
         }
     }
-
+    
     private func handleMoodCellTap(_ moodData: Mood) {
         isTabBarHidden = true
         
@@ -78,12 +97,12 @@ public struct HomeView: View {
     
     private var headerSection: some View {
         Group {
-            Text("오늘의 기분")
+            Text(HomeViewText.title.text)
                 .font(DSFont.bold(30))
                 .foregroundStyle(.white)
                 .padding(.top)
                 .shadow(radius: 5)
-            Text("오늘은 어떤 하루가 될까?")
+            Text(HomeViewText.subtitle.text)
                 .font(DSFont.medium(16))
                 .foregroundStyle(.white)
                 .padding(.top, -5)
@@ -105,7 +124,7 @@ public struct HomeView: View {
                 .ignoresSafeArea()
                 .onTapGesture(perform: dismissAlert)
             
-            WarningAlert(title: "과거의 기분은 추가할 수 없어요", onClickOK: dismissAlert)
+            WarningAlert(title: HomeViewText.pastMoodError.text, onClickOK: dismissAlert)
                 .padding()
         }
     }
@@ -126,8 +145,7 @@ public struct HomeView: View {
     }
     
     private func makeAddMoodView(moodData: Mood?) -> some View {
-        let viewModel = factory.makeAddMoodViewModel(date: date, moodData: moodData)
-        return AddMoodView(viewModel: viewModel)
+        AddMoodView(factory: factory, date: date, moodData: moodData)
     }
     
     private func dismissAlert() {
@@ -157,6 +175,7 @@ public struct HomeView: View {
 struct ContentSectionView: View {
     @ObservedObject var viewModel: HomeViewModel
     @Binding var date: Date
+    @Binding var isTabBarHidden: Bool
     
     var onAddButtonTap: () -> Void
     var onMoodCellTap: (Mood) -> Void
@@ -164,11 +183,13 @@ struct ContentSectionView: View {
     init(
         viewModel: HomeViewModel,
         date: Binding<Date>,
+        isTabBarHidden: Binding<Bool>,
         onAddButtonTap: @escaping () -> Void,
         onMoodCellTap: @escaping (Mood) -> Void
     ) {
         self.viewModel = viewModel
         self._date = date
+        self._isTabBarHidden = isTabBarHidden
         self.onAddButtonTap = onAddButtonTap
         self.onMoodCellTap = onMoodCellTap
     }
@@ -204,14 +225,33 @@ struct ContentSectionView: View {
     
     private var historySection: some View {
         HStack {
-            MotionHistoryView(
-                historyList: $viewModel.moodList,
-                onAddButtonTap: onAddButtonTap,
-                onMoodCellTap: onMoodCellTap
-            )
+                MotionHistoryView(
+                    historyList: $viewModel.moodList,
+                    isTabBarHidden: $isTabBarHidden,
+                    onAddButtonTap: onAddButtonTap,
+                    onMoodCellTap: onMoodCellTap
+                )
+            }
+            .padding(.horizontal)
+            .padding(.vertical, -40)
+    }
+    
+    @State private var lastScrollOffset: CGFloat = 0
+    
+    private func handleScroll(_ offset: CGFloat) {
+        let delta = offset - lastScrollOffset
+        
+        if delta < -10 {
+            if !isTabBarHidden {
+                isTabBarHidden = true
+            }
+        } else if delta > 10 {
+            if isTabBarHidden {
+                isTabBarHidden = false
+            }
         }
-        .padding(.horizontal)
-        .padding(.vertical, -40)
+        
+        lastScrollOffset = offset
     }
     
     private func onDateChange(_ newDate: Date) {
@@ -220,5 +260,12 @@ struct ContentSectionView: View {
             viewModel.clearMoodList()
             await viewModel.fetchMoodLists()
         }
+    }
+}
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
