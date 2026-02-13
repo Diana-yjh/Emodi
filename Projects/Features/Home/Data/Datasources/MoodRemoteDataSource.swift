@@ -14,4 +14,5 @@ public protocol MoodRemoteDataSource {
     func deleteMood(diaryID: String) async throws
     
     func uploadImage(_ imageData: [Data: String]) async throws -> [String]
+    func deleteImage(_ images: [String]) async throws
 }

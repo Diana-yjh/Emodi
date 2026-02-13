@@ -144,7 +144,7 @@ struct AddMoodView: View {
                         HStack {
                             ForEach(viewModel.selectedImages, id: \.self) { image in
                                 ImageCell(onDeleteTap: {
-                                    viewModel.selectedImages.remove(image)
+                                    viewModel.removeImageFromSelectedList(image: image)
                                 }, uiImage: image)
                             }
                         }
@@ -193,7 +193,7 @@ struct AddMoodView: View {
     
     private var savingOverlay: some View {
         Group {
-            if viewModel.isSavingImages {
+            if viewModel.isSaving {
                 ZStack {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
@@ -230,7 +230,7 @@ struct AddMoodView: View {
                 .ignoresSafeArea()
                 .onTapGesture { showAddDiaryPopup = false }
             
-            DiaryView(showAddDiaryPopup: $showAddDiaryPopup) { content in
+            DiaryView(diary: $viewModel.diaryText, showAddDiaryPopup: $showAddDiaryPopup) { content in
                 viewModel.diaryText = content
             }
             .padding()
@@ -310,11 +310,12 @@ struct AddMoodView: View {
                 }
             
             ConfirmAlert(title: "기록을 삭제하시겠습니까?", onClickOK: {
+                showMoodDeleteAlert = false
+                
                 Task {
-                    let result = await viewModel.deleteMoodData(diaryId: viewModel.moodData?.diaryID ?? "")
+                    let result = try await viewModel.deleteMoodWithImages()
                     switch result {
                     case .success():
-                        showMoodDeleteAlert = false
                         dismiss()
                     case .failure(_):
                         showSaveFailedPopup = true

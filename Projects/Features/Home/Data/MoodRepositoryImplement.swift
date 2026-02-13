@@ -32,4 +32,8 @@ public final class MoodRepositoryImplement: MoodRepository {
     public func uploadImage(imageData: [Data: String]) async throws -> [String] {
         try await remoteDataSource.uploadImage(imageData)
     }
+    
+    public func deleteImage(images: [String]) async throws {
+        try await remoteDataSource.deleteImage(images)
+    }
 }

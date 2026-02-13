@@ -54,8 +54,6 @@ public struct AnalysisView: View {
             }
         }
         .onAppear {
-            viewModel.extractDays(currentMonth: viewModel.month)
-            
             Task {
                 let result = await viewModel.getCalendarMoodData(date: viewModel.month)
                 

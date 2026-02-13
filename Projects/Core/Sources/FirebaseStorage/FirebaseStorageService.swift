@@ -37,8 +37,11 @@ public final class FirebaseStorageService: FirebaseStorageProtocol, @unchecked S
         return FirebaseStorageResult(urls: savedUrls)
     }
     
-//    public func loadImages() async throws -> [Data] {
-//        let storageRef = Storage.storage().reference()
-//        storageRef.getData(maxSize: <#T##Int64#>, completion: <#T##(Result<Data, any Error>) -> Void#>)
-//    }
+    public func deleteImage(_ images: [String]) async throws {
+        let storage = Storage.storage()
+        
+        for image in images {
+            try await storage.reference(forURL: image).delete()
+        }
+    }
 }

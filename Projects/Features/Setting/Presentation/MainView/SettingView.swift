@@ -24,13 +24,13 @@ public struct SettingView: View {
                         .font(DSFont.bold(30))
                         .padding(.top)
                     
-                    SettingSubView(title: "고객센터", content: {
-                        VStack {
-                            ContentCell(image: DesignSystemAsset.star.image, title: "별점 남기러 가기")
-                        }
-                    })
-                    .frame(height: 120)
-                    .padding()
+//                    SettingSubView(title: "고객센터", content: {
+//                        VStack {
+//                            ContentCell(image: DesignSystemAsset.star.image, title: "별점 남기러 가기")
+//                        }
+//                    })
+//                    .frame(height: 120)
+//                    .padding()
                     
                     SettingSubView(title: "기타", content: {
                         VStack {
@@ -42,7 +42,12 @@ public struct SettingView: View {
                                 .onTapGesture {
                                     navigationPath.append(.libraryInfo)
                                 }
-                            ContentCell(image: DesignSystemAsset.info.image, title: "앱 버전", subTitle: "1.0.0")
+                            ContentCell(image: DesignSystemAsset.privacy.image, title: "개인정보 처리방침")
+                                .onTapGesture {
+                                    if let url = URL(string: "https://www.notion.so/Emodi-2fe3d6de0c3b803db0dfc61dc6c37152?source=copy_link") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                }
                         }
                     })
                     .frame(height: 210)

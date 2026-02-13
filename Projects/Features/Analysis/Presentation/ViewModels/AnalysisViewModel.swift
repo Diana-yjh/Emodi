@@ -32,6 +32,7 @@ public class AnalysisViewModel: ObservableObject {
     
     public init(moodUseCase: MoodUseCaseProtocol) {
         self.moodUseCase = moodUseCase
+        self.extractDays(currentMonth: month)
     }
     
     func changeMonth(by value: Int) {

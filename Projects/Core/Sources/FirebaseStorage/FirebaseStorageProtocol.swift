@@ -18,5 +18,5 @@ public struct FirebaseStorageResult: Sendable {
 
 public protocol FirebaseStorageProtocol: Sendable {
     func uploadImage(_ imageData: [Data: String]) async throws -> FirebaseStorageResult
-//    func loadImages() async throws -> [Data]
+    func deleteImage(_ images: [String]) async throws
 }

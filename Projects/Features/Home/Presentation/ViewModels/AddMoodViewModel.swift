@@ -26,7 +26,7 @@ public class AddMoodViewModel: ObservableObject {
         }
     }
     @Published var isLoadingImages: Bool = false
-    @Published var isSavingImages: Bool = false
+    @Published var isSaving: Bool = false
     
     var canSave: Bool {
         return selectedMood != .none && diaryText != ""
@@ -45,6 +45,8 @@ public class AddMoodViewModel: ObservableObject {
     
     
     private func setImage(from selections: [PhotosPickerItem]?) {
+        isLoadingImages = true
+        
         guard let selections else { return }
         
         Task { @MainActor in
@@ -57,10 +59,9 @@ public class AddMoodViewModel: ObservableObject {
                 }
             }
             selectedImages = images
+            isLoadingImages = false
         }
     }
-    
-    
 }
 
 extension AddMoodViewModel {
@@ -84,9 +85,10 @@ extension AddMoodViewModel {
         photoUseCase.openSettings()
     }
     
+    @MainActor
     @discardableResult
     func saveMoodData() async -> HomeResult<Void, HomeError> {
-        isSavingImages = true
+        isSaving = true
         
         var urls: [String]?
         
@@ -107,10 +109,10 @@ extension AddMoodViewModel {
         
         do {
             try await moodUseCase.addMoodDiary(mood: mood)
-            isSavingImages = false
+            isSaving = false
             return .success(())
         } catch {
-            isSavingImages = false
+            isSaving = false
             return .failure(.addMoodDiaryFailed)
         }
     }
@@ -127,7 +129,7 @@ extension AddMoodViewModel {
         
         isLoadingImages = true
         
-        Task { @MainActor in
+        Task {
             do {
                 self.selectedImages = try await downloadImages(urls: urls)
             } catch {
@@ -202,5 +204,56 @@ extension AddMoodViewModel {
         }
         
         return images
+    }
+    
+    @discardableResult
+    func deleteImages() async throws -> HomeResult<Void, HomeError> {
+        guard let moodData = moodData else {
+            return .failure(HomeError.deleteImageFailed)
+        }
+        
+        let urls = moodData.photoURL ?? []
+        
+        do {
+            try await moodUseCase.deleteImage(images: urls)
+            return .success(())
+        } catch {
+            return .failure(HomeError.deleteImageFailed)
+        }
+    }
+    
+    @discardableResult
+    func deleteMoodWithImages() async throws -> HomeResult<Void, HomeError> {
+        isSaving = true
+        
+        guard let moodData = moodData else {
+            isSaving = false
+            return .failure(.deleteMoodDiaryFailed)
+        }
+        
+        let imageResult = try await deleteImages()
+        if case .failure(let error) = imageResult {
+            isSaving = false
+            return .failure(error)
+        }
+        
+        let moodResult = await deleteMoodData(diaryId: moodData.diaryID)
+        if case .failure(let error) = moodResult {
+            isSaving = false
+            return .failure(error)
+        }
+        
+        isSaving = false
+        return .success(())
+    }
+    
+    func removeImageFromSelectedList(image: UIImage) {
+        guard let firstIndex = selectedImages.firstIndex(of: image) else { return }
+        
+        selectedImages.remove(at: firstIndex)
+        
+        if imageSelections.count != 0 {
+            imageSelections.remove(at: firstIndex)
+        }
     }
 }

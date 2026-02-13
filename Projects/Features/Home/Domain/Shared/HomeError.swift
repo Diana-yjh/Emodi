@@ -21,4 +21,5 @@ public enum HomeError: Error {
     case uploadImageFailed
     case imageDownloadFailed
     case imageDecodeFailed
+    case deleteImageFailed
 }

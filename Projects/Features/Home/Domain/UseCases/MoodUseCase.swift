@@ -13,6 +13,7 @@ public protocol MoodUseCaseProtocol {
     func deleteMoodDiary(diaryId: String) async throws
     
     func uploadImage(imageData: [Data: String]) async throws -> [String]
+    func deleteImage(images: [String]) async throws
 }
 
 public final class MoodUseCase: MoodUseCaseProtocol {
@@ -36,5 +37,9 @@ public final class MoodUseCase: MoodUseCaseProtocol {
     
     public func uploadImage(imageData: [Data: String]) async throws -> [String] {
         try await repository.uploadImage(imageData: imageData)
+    }
+    
+    public func deleteImage(images: [String]) async throws {
+        try await repository.deleteImage(images: images)
     }
 }

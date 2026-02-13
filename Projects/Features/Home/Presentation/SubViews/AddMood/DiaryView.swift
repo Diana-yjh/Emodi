@@ -9,7 +9,7 @@ import SwiftUI
 import DesignSystem
 
 struct DiaryView: View {
-    @State var diary: String = ""
+    @Binding var diary: String
     @Binding var showAddDiaryPopup: Bool
     var diaryFinished: (String) -> Void
     
@@ -72,5 +72,5 @@ struct DiaryView: View {
 }
 
 #Preview {
-    DiaryView(diary: "", showAddDiaryPopup: Binding.constant(true)) {_ in}
+    DiaryView(diary: Binding.constant(""), showAddDiaryPopup: Binding.constant(true)) {_ in}
 }

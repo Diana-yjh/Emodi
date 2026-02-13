@@ -71,4 +71,8 @@ public final class MoodRemoteDataSourceImplement: MoodRemoteDataSource {
     public func uploadImage(_ imageData: [Data: String]) async throws -> [String] {
         try await firebaseStorageService.uploadImage(imageData).urls
     }
+    
+    public func deleteImage(_ images: [String]) async throws {
+        try await firebaseStorageService.deleteImage(images)
+    }
 }

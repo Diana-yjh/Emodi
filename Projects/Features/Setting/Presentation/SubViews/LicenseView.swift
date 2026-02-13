@@ -25,11 +25,23 @@ public struct LicenseView: View {
                     .font(DSFont.bold(18))
                     .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
                     .padding(.horizontal)
-                Text("Licensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at:\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and limitations under the License.")
-                    .font(DSFont.medium(14))
-                    .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
-                    .lineSpacing(3)
-                    .padding()
+                Text("""
+                Licensed under the Apache License, Version 2.0 (the "License");
+                you may not use this file except in compliance with the License.
+                You may obtain a copy of the License at
+                
+                http://www.apache.org/licenses/LICENSE-2.0
+                
+                Unless required by applicable law or agreed to in writing, software
+                distributed under the License is distributed on an "AS IS" BASIS,
+                WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                See the License for the specific language governing permissions and
+                limitations under the License.
+                """)
+                .font(DSFont.medium(14))
+                .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
+                .lineSpacing(3)
+                .padding()
                 
                 Text("2. Apple iOS Frameworks")
                     .font(DSFont.bold(18))

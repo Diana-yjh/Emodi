@@ -25,11 +25,18 @@ public struct LibraryInfoView: View {
                     .font(DSFont.bold(18))
                     .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
                     .padding(.horizontal)
-                Text("본 애플리케이션은 Google Firebase SDK 및 관련 구성 요소를 사용합니다.\nFirebase SDK는 아래의 Apache License 2.0 조건에 따라 배포됩니다.\nCopyright (c) 2024 Google LLC\nLicensed under the Apache License, Version 2.0")
-                    .font(DSFont.medium(14))
-                    .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
-                    .lineSpacing(3)
-                    .padding()
+                Text("""
+                     Firebase iOS SDK
+                     Version: 11.15.0
+                     Copyright © Google LLC
+                     License: Apache License 2.0
+                     https://github.com/firebase/firebase-ios-sdk
+                     """
+                )
+                .font(DSFont.medium(14))
+                .foregroundStyle(DesignSystemAsset.gray.swiftUIColor)
+                .lineSpacing(3)
+                .padding()
             }
             .scrollIndicators(.hidden)
             Spacer()
